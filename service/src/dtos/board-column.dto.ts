@@ -28,5 +28,16 @@ export class BoardColumnDto extends BaseDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CaseCardDto)
-  public columnCards: CaseCardDto[];
+  public columnCards?: CaseCardDto[];
+}
+
+export class AllBoardColumnsDto {
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => BoardColumnDto)
+  public items: BoardColumnDto[];
+
+  @IsDefined()
+  @IsNumber()
+  public itemsCount: number;
 }

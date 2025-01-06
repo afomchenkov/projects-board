@@ -21,6 +21,7 @@ export class BoardColumnEntity extends BaseEntity {
   public ordinal: number;
 
   @Column({
+    name: 'metadata',
     type: 'jsonb',
     default: () => "{}",
     nullable: true,

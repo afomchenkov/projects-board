@@ -1,4 +1,5 @@
-import { IsUUID, IsString, IsNumber, IsDefined, IsOptional, IsJSON } from 'class-validator';
+import { IsArray, IsUUID, IsString, IsDefined, IsNumber, IsOptional, IsJSON, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
 import { BaseDto } from './base.dto';
 
 export class CaseCardDto extends BaseDto {
@@ -21,4 +22,15 @@ export class CaseCardDto extends BaseDto {
   @IsDefined()
   @IsUUID()
   public boardColumnId: string;
+}
+
+export class AllCaseCardsDto {
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CaseCardDto)
+  public items: CaseCardDto[];
+
+  @IsDefined()
+  @IsNumber()
+  public itemsCount: number;
 }

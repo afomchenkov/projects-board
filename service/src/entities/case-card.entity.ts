@@ -19,6 +19,7 @@ export class CaseCardEntity extends BaseEntity {
   public ordinal: number;
 
   @Column({
+    name: 'metadata',
     type: 'jsonb',
     default: () => "{}",
     nullable: true,

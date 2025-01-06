@@ -12,15 +12,15 @@ export class ProjectService {
 
   async findAll(): Promise<ProjectEntity[]> {
     return this.projectRepository.find({
-      relations: ['boards'],
+      relations: [],
     });
   }
 
-  async findOne(id: number): Promise<ProjectEntity | null> {
+  async findOne(id: string): Promise<ProjectEntity | null> {
     return this.projectRepository.findOneBy({ id });
   }
 
-  async remove(id: number): Promise<void> {
+  async remove(id: string): Promise<void> {
     await this.projectRepository.delete(id);
   }
 }

@@ -1,4 +1,4 @@
-import { IsArray, IsUUID, IsString, IsDefined, IsOptional, IsJSON, ValidateNested } from 'class-validator';
+import { IsArray, IsUUID, IsString, IsDefined, IsNumber, IsOptional, IsJSON, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { BaseDto } from './base.dto';
 import { BoardColumnDto } from './board-column.dto';
@@ -24,5 +24,16 @@ export class BoardDto extends BaseDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => BoardColumnDto)
-  public boardColumns: BoardColumnDto[];
+  public boardColumns?: BoardColumnDto[];
+}
+
+export class AllBoardsDto {
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => BoardDto)
+  public items: BoardDto[];
+
+  @IsDefined()
+  @IsNumber()
+  public itemsCount: number;
 }

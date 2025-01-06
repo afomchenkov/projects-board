@@ -16,6 +16,7 @@ export class ProjectEntity extends BaseEntity {
   public description: string;
 
   @Column({
+    name: 'metadata',
     type: 'jsonb',
     default: () => "{}",
     nullable: true,

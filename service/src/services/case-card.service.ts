@@ -12,15 +12,15 @@ export class CaseCardService {
 
   async findAll(): Promise<CaseCardEntity[]> {
     return this.caseCardRepository.find({
-      relations: ['boardColumn'],
+      relations: [],
     });
   }
 
-  async findOne(id: number): Promise<CaseCardEntity | null> {
+  async findOne(id: string): Promise<CaseCardEntity | null> {
     return this.caseCardRepository.findOneBy({ id });
   }
 
-  async remove(id: number): Promise<void> {
+  async remove(id: string): Promise<void> {
     await this.caseCardRepository.delete(id);
   }
 }

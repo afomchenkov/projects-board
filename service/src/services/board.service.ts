@@ -12,15 +12,15 @@ export class BoardService {
 
   async findAll(): Promise<BoardEntity[]> {
     return this.boardRepository.find({
-      relations: ['project', 'boardColumns'],
+      relations: ['project'],
     });
   }
 
-  async findOne(id: number): Promise<BoardEntity | null> {
+  async findOne(id: string): Promise<BoardEntity | null> {
     return this.boardRepository.findOneBy({ id });
   }
 
-  async remove(id: number): Promise<void> {
+  async remove(id: string): Promise<void> {
     await this.boardRepository.delete(id);
   }
 }

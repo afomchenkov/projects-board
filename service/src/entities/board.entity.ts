@@ -18,6 +18,7 @@ export class BoardEntity extends BaseEntity {
   public description: string;
 
   @Column({
+    name: 'metadata',
     type: 'jsonb',
     default: () => "{}",
     nullable: true,

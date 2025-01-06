@@ -5,21 +5,22 @@ import {
 } from 'typeorm';
 
 export class BaseEntity {
+  @CreateDateColumn({ name: 'id' })
   @PrimaryGeneratedColumn()
-  public id: number;
+  public id: string;
 
   @CreateDateColumn({
     name: 'created_at',
     type: 'timestamptz',
-    default: () => 'CURRENT_TIMESTAMP(6)'
+    default: () => 'CURRENT_TIMESTAMP'
   })
-  public created_at: Date;
+  public createdAt: string;
 
   @UpdateDateColumn({
     name: 'updated_at',
     type: 'timestamptz',
-    default: () => 'CURRENT_TIMESTAMP(6)',
-    onUpdate: 'CURRENT_TIMESTAMP(6)'
+    default: () => 'CURRENT_TIMESTAMP',
+    onUpdate: 'CURRENT_TIMESTAMP'
   })
-  public updated_at: Date;
+  public updatedAt: string;
 }

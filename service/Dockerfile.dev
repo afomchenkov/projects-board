@@ -4,10 +4,12 @@ WORKDIR /app
 
 RUN apk add --no-cache bash curl dos2unix
 
-COPY package.json ./
+COPY service/package.json ./
 
 RUN npm install
 
-COPY . .
+COPY service ./
 
 ENTRYPOINT [ "npm", "run", "start:dev" ]
+
+# TODO: add multistage build

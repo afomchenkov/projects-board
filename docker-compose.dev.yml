@@ -1,0 +1,56 @@
+name: projects-board
+
+services:
+  postgresql:
+    image: projects-board-db:dev
+    container_name: projects-board-db
+    build:
+      context: ./resources/db
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - 5432:5432
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d coding-challenge -U postgress"]
+      interval: 3s
+      timeout: 5s
+      retries: 6
+    volumes:
+      - projects-board-db-data:/var/lib/postgresql/data
+    networks:
+      - projects-board-network
+
+  projects-board-service:
+    image: projects-board-service:dev
+    container_name: projects-board-service
+    build:
+      context: .
+      dockerfile: ./Dockerfile.dev
+    ports:
+      - 3000:3000
+    tty: true
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      POSTGRES_DB: projects-board
+      POSTGRES_USER: postgress
+      POSTGRES_PASSWORD: mypassword123!
+      POSTGRES_PORT: 5432
+      POSTGRES_HOST: projects-board-db
+      DATABASE_LOGGING: true
+    volumes:
+      - .:/app
+    depends_on:
+      postgresql:
+        condition: service_healthy
+    networks:
+      - projects-board
+
+networks:
+  projects-board-network:
+    name: projects-board-network
+    driver: bridge
+
+volumes:
+  projects-board-db-data:
+    name: projects-board-db-data

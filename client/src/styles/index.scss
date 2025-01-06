@@ -1,0 +1,129 @@
+:root {
+    --blue-10: #edf5ff;
+    --blue-20: #d0e2ff;
+    --blue-30: #a6c8ff;
+    --blue-40: #78a9ff;
+    --blue-50: #4589ff;
+    --blue-60: #0f62fe;
+    --blue-70: #0043ce;
+    --blue-80: #002d9c;
+    --blue-90: #001d6c;
+    --blue-100: #001141;
+
+    --tooltip-link: #7aabff;
+    --support-success: #24a148;
+    --support-error: #da1e28;
+    --support-warning: #f1c21b;
+    --icon-interactive: #0f62fe;
+    --icon-secondary: #525252;
+    --border-subtle-01: #e0e0e0;
+
+    --border-subtle-selected-01: #c6c6c6;
+    --border-subtle-selected-02: #c6c6c6;
+    --border-subtle-selected-03: #c6c6c6;
+
+    --silver-lighten-99: hsl(0, 0%, 99%);
+    --silver-base-98: hsl(0, 0%, 98%);
+    --silver-base-97: hsl(0, 0%, 97%);
+    --silver-darken-94: hsl(0, 0%, 94%);
+    --silver-darken-87: hsl(0, 0%, 87%);
+    --silver-darken-80: hsl(0, 0%, 80%);
+    --silver-darken-89: hsl(0, 0%, 89%);
+
+    --grey-lighten-60: hsl(0, 0%, 60%);
+    --grey-lighten-56: hsl(0, 0%, 56%);
+    --grey-lighten-50: hsl(0, 0%, 50%);
+    --grey-base-40: hsl(0, 0%, 40%);
+    --grey-darken-36: hsl(0, 0%, 36%);
+    --grey-darken-33: hsl(0, 0%, 33%);
+    --grey-darken-30: hsl(0, 0%, 30%);
+    --grey-darken-23: hsl(0, 0%, 23%);
+    --grey-darken-13: hsl(0, 0%, 13%);
+
+    --red-lighten-85: hsl(360, 100%, 85%);
+    --red-base-62: hsl(360, 100%, 62%);
+    --red-darken-52: hsl(360, 100%, 52%);
+    --red-darken-42: hsl(360, 100%, 42%);
+    --red-darken-38: hsl(360, 100%, 38%);
+    --red-darken-26: hsl(360, 100%, 26%);
+    --red-darken-18: hsl(360, 100%, 18%);
+
+    --orange-base-60: hsl(34, 100%, 60%);
+    --green-base-44: hsl(105, 86%, 44%);
+
+    --spacing-tiny: 5px;
+    --spacing-small: 10px;
+    --spacing-medium: 20px;
+    --spacing-large: 40px;
+    --spacing-huge: 60px;
+
+    --black-primary-text: #161616;
+    --black-secondary-text: #525252;
+    --black-inactive-text: rgba(22, 22, 22, 0.25);
+    --blue-base: #4d90ff;
+    --green-base: #10d070;
+    --red-base: #ff3d3d;
+    --orange-base: #ffa533;
+    --orange-empty-state: #ff8201;
+    --white-base: #ffffff;
+    --white-base-rgb: 255, 255, 255;
+    --black-base-rgb: 0, 0, 0;
+    --ui-light1: #f2f3f5;
+    --ui-light2: #f7f8fa;
+    --ui-light3: #b0bac7;
+    --ui-light4: #fdfdfe;
+    --ui-light5: #d8dce3;
+    --ui-light5-rgb: 216, 220, 227;
+    --ui-light6: #62626e;
+    --ui-light6-rgb: 98, 98, 110;
+    --ui-dark1: #1c1f23;
+    --ui-dark2: #313238;
+    --ui-dark3: #393a41;
+    --ui-dark4: #45464e;
+    --ui-dark5: #5b5e63;
+    --ui-dark6: #6d7076;
+
+    --focus-outer-neutral: #8cb7ff;
+    --focus-inner-neutral: #c8e1ff;
+    --focus-inner-neutral2: #2b7bff;
+    --focus-outer-danger: #ffb3b3;
+    --focus-inner-danger: #ffe0e0;
+
+    --button-light1: #cdd4df;
+    --button-light2: #9ea9b7;
+    --button-light3: #88889a;
+    --button-light4: #f1f2f5;
+    --button-light5: #e7e9ee;
+    --button-light6: #d3d6e0;
+    --button-blue1: #a2c5ff;
+    --button-blue2: #80b0ff;
+    --button-blue3: #3c85ff;
+    --button-blue4: #1a70ff;
+    --button-blue5: #005df7;
+    --button-red1: #ffcccc;
+    --button-red2: #ffb3b3;
+    --button-red3: #ff0a0a;
+    --button-red4: #d60000;
+    --button-red5: #c20000;
+
+    --link: hsl(218, 58%, 49%);
+    --link-hover: hsl(218, 58%, 55%);
+    --link-active: hsl(218, 58%, 39%);
+    --link-dark: hsl(213, 100%, 93%);
+    --link-hover-dark: hsl(213, 100%, 89%);
+    --link-active-dark: hsl(214, 100%, 96%);
+    --blue-205-100-50: hsl(205, 100%, 50%);
+    --blue-205-100-95: hsl(205, 100%, 95%);
+    
+    --z-notification: 9100;
+    --z-snackbar: 9100;
+    --z-tooltip: 9000;
+    --z-dropdown: 8200;
+    --z-dialog: 8100;
+    --z-feel-editor: 8099;
+    --z-popup-menu: 8099;
+    --z-resizable-panel-handle: 8000;
+    --z-tooltip-guide: 8000;
+    --z-xml-editor: 8000;
+    --z-action-bar-header: 8001;
+}

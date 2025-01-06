@@ -1,0 +1,31 @@
+@import "./styles/variables";
+
+.app-layout {
+  &__header {
+    display: flex;
+    align-items: center;
+    position: sticky;
+    border-bottom: 1px solid var(--silver-darken-87);
+    background-color: var(--cm-color-ui-light1);
+    top: 0px;
+    block-size: 3rem;
+    z-index: 10;
+  }
+
+  &__main {
+    margin: 0.5em;
+    font-size: 1.45em;
+
+    @media only screen and (min-width: $min-width-sm) {
+      margin: 1em;
+    }
+
+    @media only screen and (min-width: $min-width-md) {
+      margin: 1em 2em;
+    }
+  }
+
+  &__footer {
+    min-height: 2em;
+  }
+}

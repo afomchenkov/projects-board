@@ -7,6 +7,7 @@ import {
   useCallback,
 } from "react";
 import { useFetch } from "../hooks/useFetch";
+import { useMountedRef } from "../hooks/useMountedRef";
 import { BOARD_COLUMNS_URL, BOARD_ID } from "../constants";
 import { AppContext, defaultAppState } from "./appContext";
 import { BoardColumn } from "../types";
@@ -24,6 +25,7 @@ export const AppProvider: AppProviderType = ({ children }) => {
   const [boardColumns, setBoardColumns] = useState<BoardColumn[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const isMounted = useMountedRef();
 
   const {
     data,
@@ -118,6 +120,15 @@ export const AppProvider: AppProviderType = ({ children }) => {
     [deleteColumnRequest]
   );
 
+  const addNewCaseCard = useCallback(async () => {
+    // const createCardPayload = {
+    //   name: `new-column-${generateRandomStr(4)}`,
+    //   description: `new-column-description-${generateRandomStr(24)}`,
+    //   ordinal: calculateNextColumnOrdinal(boardColumns),
+    //   boardId: boardColumns[0].boardId,
+    // };
+  }, []);
+
   const appState = useMemo(() => {
     return {
       ...defaultAppState,
@@ -126,6 +137,7 @@ export const AppProvider: AppProviderType = ({ children }) => {
       error,
       addNewColumn,
       deleteColumn,
+      addNewCaseCard,
     };
   }, [isLoading, boardColumns, error, addNewColumn, deleteColumn]);
 

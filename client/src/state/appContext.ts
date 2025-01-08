@@ -8,6 +8,7 @@ export type AppState = {
   error: string | null;
   addNewColumn: () => void;
   deleteColumn: (id: string) => void;
+  addNewCaseCard: () => void;
 }
 
 export const defaultAppState = {
@@ -16,6 +17,7 @@ export const defaultAppState = {
   error: null,
   addNewColumn: Noop,
   deleteColumn: Noop,
+  addNewCaseCard: Noop,
 };
 
 export const AppContext = createContext<AppState>(defaultAppState);

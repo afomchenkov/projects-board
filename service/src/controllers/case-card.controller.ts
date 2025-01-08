@@ -6,6 +6,7 @@ import {
   InternalServerErrorException,
   Logger,
   HttpCode,
+  Query
 } from '@nestjs/common';
 import { CaseCardService } from '../services';
 import { AllCaseCardsDto } from '../dtos';
@@ -17,9 +18,13 @@ export class CaseCardController {
   constructor(private readonly caseCardService: CaseCardService) { }
 
   @Get('/')
-  async getAllCaseCards(): Promise<AllCaseCardsDto> {
+  async getAllCaseCards(@Query() query): Promise<AllCaseCardsDto> {
     try {
-      const items = await this.caseCardService.findAll();
+      const { columnId } = query;
+
+      const items = await this.caseCardService.findAll({
+        columnId,
+      });
 
       return {
         items,

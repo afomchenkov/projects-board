@@ -32,7 +32,7 @@ export class BoardEntity extends BaseEntity {
   @JoinColumn({ name: 'project_id' })
   public project: ProjectEntity | null;
 
-  @OneToMany(() => BoardColumnEntity, (boardColumn) => boardColumn.boardId)
+  @OneToMany(() => BoardColumnEntity, (boardColumn) => boardColumn.board)
   @JoinColumn({
     name: 'boardId',
     referencedColumnName: 'board_id',

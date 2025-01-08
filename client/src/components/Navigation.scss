@@ -8,16 +8,16 @@
     display: flex;
     align-items: center;
 
-    // &:before {
-    //   position: absolute;
-    //   display: block;
-    //   background-color: var(--border-subtle-selected-01);
-    //   block-size: 1.5rem;
-    //   content: "";
-    //   inline-size: 0.0625rem;
-    //   inset-block-start: 50%;
-    //   transform: translateY(-50%);
-    // }
+    &:before {
+      position: absolute;
+      display: block;
+      background-color: var(--border-subtle-selected-01);
+      block-size: 1.5rem;
+      content: "";
+      inline-size: 0.0625rem;
+      inset-block-start: 50%;
+      transform: translateY(-50%);
+    }
 
     &-item {
       padding: 1.2em;

@@ -6,10 +6,11 @@
     align-items: center;
     position: sticky;
     border-bottom: 1px solid var(--silver-darken-87);
-    background-color: var(--cm-color-ui-light1);
+    background-color: var(--ui-light1);
     top: 0px;
     block-size: 3rem;
     z-index: 10;
+    box-shadow: rgba(27, 31, 35, 0.04) 0px 1px 0px, rgba(255, 255, 255, 0.25) 0px 1px 0px inset;
   }
 
   &__main {

@@ -10,9 +10,14 @@ export class BoardColumnService {
     private boardColumnRepository: Repository<BoardColumnEntity>,
   ) { }
 
-  async findAll(): Promise<BoardColumnEntity[]> {
+  async findAll(params: { boardId?: string; }): Promise<BoardColumnEntity[]> {
     return this.boardColumnRepository.find({
-      relations: ['board'],
+      relations: ['board', 'columnCards'],
+      where: {
+        board: {
+          id: params.boardId
+        },
+      },
     });
   }
 

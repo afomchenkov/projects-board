@@ -6,6 +6,7 @@ import {
   InternalServerErrorException,
   Logger,
   HttpCode,
+  Query,
 } from '@nestjs/common';
 import { BoardColumnService } from '../services';
 import { AllBoardColumnsDto } from '../dtos';
@@ -17,9 +18,13 @@ export class BoardColumnController {
   constructor(private readonly boardColumnService: BoardColumnService) { }
 
   @Get('/')
-  async getAllBoardColumns(): Promise<AllBoardColumnsDto> {
+  async getAllBoardColumns(@Query() query): Promise<AllBoardColumnsDto> {
     try {
-      const items = await this.boardColumnService.findAll();
+      const { boardId } = query;
+
+      const items = await this.boardColumnService.findAll({
+        boardId,
+      });
 
       return {
         items,

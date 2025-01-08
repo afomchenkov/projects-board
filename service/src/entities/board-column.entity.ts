@@ -35,7 +35,7 @@ export class BoardColumnEntity extends BaseEntity {
   @JoinColumn({ name: 'board_id' })
   public board: BoardEntity | null;
 
-  @OneToMany(() => CaseCardEntity, (columnCard) => columnCard.boardColumnId)
+  @OneToMany(() => CaseCardEntity, (columnCard) => columnCard.boardColumn)
   @JoinColumn({
     name: 'boardColumnId',
     referencedColumnName: 'board_column_id',

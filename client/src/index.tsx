@@ -3,9 +3,15 @@ import ReactDOM from "react-dom/client";
 import { RouterProvider } from "react-router-dom";
 import { router } from "./routes";
 
+import "@atlaskit/css-reset";
+import "@atlaskit/tokens/css/atlassian-light.css";
+import { setGlobalTheme } from "@atlaskit/tokens";
+
 import reportWebVitals from "./reportWebVitals";
 import "./styles/reset.scss";
 import "./styles/index.scss";
+
+setGlobalTheme("light");
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement

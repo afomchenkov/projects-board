@@ -10,9 +10,12 @@ export class CaseCardService {
     private caseCardRepository: Repository<CaseCardEntity>,
   ) { }
 
-  async findAll(): Promise<CaseCardEntity[]> {
+  async findAll(params: { columnId?: string; }): Promise<CaseCardEntity[]> {
     return this.caseCardRepository.find({
       relations: [],
+      where: {
+        boardColumnId: params.columnId,
+      }
     });
   }
 

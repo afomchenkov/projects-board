@@ -1,0 +1,33 @@
+.app-board-card {
+  display: flex;
+  height: calc(var(--grid) * 7);
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  gap: var(--grid);
+  flex-direction: row;
+  background-color: var(--ds-surface-raised, red);
+  border-radius: calc(var(--grid) / 3);
+  box-shadow: 0px 0px 1px rgba(9, 30, 66, 0.31), 0px 1px 1px rgba(9, 30, 66, 0.25);
+  cursor: grab;
+  --local-line-height: 2px;
+  // margin: .3em;
+  // user-select: none;
+  // -webkit-user-select: none;
+
+  &__id {
+    // position: absolute;
+    top: var(--grid);
+    right: var(--grid);
+    color: var(--ds-text-disabled, red);
+    font-size: 10px;
+  }
+
+  &__text {
+    margin: 0,
+  }
+}
+
+.--is-card-dragging {
+  color: var(--ds-text-disabled);
+}

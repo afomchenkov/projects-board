@@ -16,6 +16,7 @@ import TrashIcon from "@atlaskit/icon/glyph/trash";
 import EditIcon from "@atlaskit/icon/glyph/edit";
 import { BoardColumn } from "../../types";
 import { Card } from "./Card";
+import { useAppContext } from "../../state/appContext";
 import "./Column.scss";
 
 export const Column = memo(({ column }: { column: BoardColumn }) => {
@@ -24,10 +25,12 @@ export const Column = memo(({ column }: { column: BoardColumn }) => {
   const cardListRef = useRef<HTMLDivElement | null>(null);
   const [isDraggingOver, setIsDraggingOver] = useState<boolean>(false);
   const [closestEdge, setClosestEdge] = useState<Edge | null>(null);
+  const { deleteColumn } = useAppContext();
+
   const columnId = column.id;
 
   const handleColumnDeleteClick = () => {
-    console.log("Column delete clicked: ", columnId);
+    deleteColumn(columnId);
   };
 
   const handleNewCaseCreate = () => {

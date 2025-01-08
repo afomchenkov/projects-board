@@ -1,10 +1,25 @@
 import { useCallback, useState, useEffect } from "react";
 
-export type UseFetch = (url: string, options?: object) => {
+const parseJson = async (response: Response) => {
+  const text = await response.text()
+
+  try {
+    const json = JSON.parse(text);
+    return json;
+  } catch (error) {
+    console.warn(`Invalid JSON object in HTTP response: "${text}"`);
+  }
+
+  return null;
+}
+
+export type Dispatch = (dispatchParams?: { overrideUrl?: string; overrideOptions?: object; }) => Promise<void>;
+
+export type UseFetch = (url: string, options?: object, isEager?: boolean) => {
   data: any;
   error: string | null;
   isPending: boolean;
-  fetchData: Function;
+  dispatch: Dispatch;
 }
 
 export const useFetch: UseFetch = (url, options, isEager = true) => {
@@ -12,16 +27,18 @@ export const useFetch: UseFetch = (url, options, isEager = true) => {
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchData = useCallback(async () => {
+  const dispatch: Dispatch = useCallback(async (dispatchParams) => {
+    const { overrideUrl, overrideOptions } = dispatchParams || {};
+
     setIsPending(true);
 
     try {
-      const response = await fetch(url, { ...options });
+      const response = await fetch(overrideUrl ?? url, { ...options, ...overrideOptions });
       if (!response.ok) {
         throw new Error(response.statusText);
       }
 
-      const json = await response.json();
+      const json = await parseJson(response);
 
       setData(json);
     } catch (error) {
@@ -33,9 +50,9 @@ export const useFetch: UseFetch = (url, options, isEager = true) => {
 
   useEffect(() => {
     if (isEager) {
-      fetchData();
+      dispatch();
     }
-  }, [url, options, isEager, fetchData]);
+  }, [url, options, isEager, dispatch]);
 
-  return { data, isPending, error, fetchData };
+  return { data, isPending, error, dispatch };
 };

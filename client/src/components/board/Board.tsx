@@ -8,6 +8,7 @@ import { IconButton } from "@atlaskit/button/new";
 import AddIcon from "@atlaskit/icon/glyph/add";
 import { Column } from "./Column";
 import { BoardColumn, BoardColumnsMap, ColumnCard } from "../../types";
+import { useAppContext } from "../../state/appContext";
 import "./Board.scss";
 
 export const getInitialData = (boardColumns: BoardColumn[] = []) => {
@@ -38,10 +39,11 @@ const Board: BoardType = ({ columns }) => {
     orderedColumns: BoardColumn[];
     orderedColumnIds: string[];
   }>(() => getInitialData(columns));
+  const { addNewColumn } = useAppContext();
 
   const handleAddNewColumn = useCallback(() => {
-    console.log("create column");
-  }, []);
+    addNewColumn();
+  }, [addNewColumn]);
 
   useEffect(() => {
     return combine(

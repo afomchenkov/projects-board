@@ -2,13 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { BoardColumnDto, CreateBoardColumnDto } from '../dtos';
-import { BoardColumnEntity } from '../entities';
+import { BoardColumnEntity, CaseCardEntity } from '../entities';
 
 @Injectable()
 export class BoardColumnService {
   constructor(
     @InjectRepository(BoardColumnEntity)
     private boardColumnRepository: Repository<BoardColumnEntity>,
+    @InjectRepository(CaseCardEntity)
+    private caseCardRepository: Repository<CaseCardEntity>,
   ) { }
 
   async findAll(params: { boardId?: string; }): Promise<BoardColumnEntity[]> {
@@ -33,6 +35,9 @@ export class BoardColumnService {
   }
 
   async remove(id: string): Promise<void> {
+    // delete board column
     await this.boardColumnRepository.delete(id);
+    // delete assigned case cards
+    await this.caseCardRepository.delete({ boardColumnId: id });
   }
 }

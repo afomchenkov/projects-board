@@ -2,6 +2,24 @@ import { IsArray, IsUUID, IsString, IsDefined, IsNumber, IsOptional, IsJSON, Val
 import { Type } from 'class-transformer';
 import { BaseDto } from './base.dto';
 
+export class CreateCaseCardDto {
+  @IsDefined()
+  @IsString()
+  public name: string;
+
+  @IsDefined()
+  @IsString()
+  public description: string;
+
+  @IsDefined()
+  @IsNumber()
+  public ordinal: number;
+
+  @IsDefined()
+  @IsUUID()
+  public boardColumnId: string;
+}
+
 export class CaseCardDto extends BaseDto {
   @IsDefined()
   @IsString()

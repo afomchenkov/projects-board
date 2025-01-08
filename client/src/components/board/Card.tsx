@@ -70,10 +70,10 @@ export const Card = memo(
               setClosestEdge(extractClosestEdge(args.self.data));
             }
           },
-          onDragLeave: (args) => {
+          onDragLeave: (_args) => {
             setClosestEdge(null);
           },
-          onDrop: (args) => {
+          onDrop: (_args) => {
             setClosestEdge(null);
           },
         })
@@ -87,8 +87,7 @@ export const Card = memo(
         data-testid={`card-${cardId}`}
         data-card-state={`${stateText[state]}`}
       >
-        <span className="app-board-card__id">ID: {cardId}</span>
-        {/** <CardText state={state} /> */}
+        <span className="app-board-card__id">ID: {columnCard.name}</span>
         <DropIndicator edge={closestEdge} gap={8} />
       </div>
     );

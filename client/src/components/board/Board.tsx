@@ -1,9 +1,11 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import type { Edge } from "@atlaskit/drag-and-drop-hitbox/types";
 import { extractClosestEdge } from "@atlaskit/drag-and-drop-hitbox/closest-edge";
 import { reorderWithEdge } from "@atlaskit/drag-and-drop-hitbox/reorder-with-edge";
 import { monitorForElements } from "@atlaskit/drag-and-drop/adapter/element";
 import { combine } from "@atlaskit/drag-and-drop/util/combine";
+import { IconButton } from "@atlaskit/button/new";
+import AddIcon from "@atlaskit/icon/glyph/add";
 import { Column } from "./Column";
 import { BoardColumn, BoardColumnsMap, ColumnCard } from "../../types";
 import "./Board.scss";
@@ -24,7 +26,10 @@ export const getInitialData = (boardColumns: BoardColumn[] = []) => {
   return { columnMap, orderedColumns, orderedColumnIds };
 };
 
-type BoardType = (props: { columns: BoardColumn[] }) => React.JSX.Element;
+type BoardType = (props: {
+  columns: BoardColumn[];
+  // onColumnCreate: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+}) => React.JSX.Element;
 
 const Board: BoardType = ({ columns }) => {
   const ref = useRef<HTMLDivElement | null>(null);
@@ -33,6 +38,10 @@ const Board: BoardType = ({ columns }) => {
     orderedColumns: BoardColumn[];
     orderedColumnIds: string[];
   }>(() => getInitialData(columns));
+
+  const handleAddNewColumn = useCallback(() => {
+    console.log("create column");
+  }, []);
 
   useEffect(() => {
     return combine(
@@ -237,8 +246,13 @@ const Board: BoardType = ({ columns }) => {
       {data.orderedColumnIds.map((columnId) => {
         return <Column column={data.columnMap[columnId]} key={columnId} />;
       })}
+      <IconButton
+        icon={AddIcon}
+        label="Add New Column"
+        onClick={handleAddNewColumn}
+      />
     </div>
-  ) as React.JSX.Element;
+  );
 };
 
 export default Board;

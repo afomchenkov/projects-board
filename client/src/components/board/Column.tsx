@@ -10,6 +10,10 @@ import {
   dropTargetForElements,
 } from "@atlaskit/drag-and-drop/adapter/element";
 import { combine } from "@atlaskit/drag-and-drop/util/combine";
+import { IconButton } from "@atlaskit/button/new";
+import Button from "@atlaskit/button/new";
+import TrashIcon from "@atlaskit/icon/glyph/trash";
+import EditIcon from "@atlaskit/icon/glyph/edit";
 import { BoardColumn } from "../../types";
 import { Card } from "./Card";
 import "./Column.scss";
@@ -22,7 +26,13 @@ export const Column = memo(({ column }: { column: BoardColumn }) => {
   const [closestEdge, setClosestEdge] = useState<Edge | null>(null);
   const columnId = column.id;
 
-  const handleAddNewColumn = () => {};
+  const handleColumnDeleteClick = () => {
+    console.log("Column delete clicked: ", columnId);
+  };
+
+  const handleNewCaseCreate = () => {
+    console.log("Case create clicked: ", columnId);
+  }
 
   useEffect(() => {
     return combine(
@@ -62,11 +72,11 @@ export const Column = memo(({ column }: { column: BoardColumn }) => {
           setClosestEdge(extractClosestEdge(args.self.data));
         },
         onDragLeave: (args) => {
-          console.log('on darg leave ', args, args.self);
+          console.log("on darg leave ", args, args.self);
           setClosestEdge(null);
         },
         onDrop: (args) => {
-          console.log('on darg drop ', args, args.self);
+          console.log("on darg drop ", args, args.self);
           setClosestEdge(null);
         },
       })
@@ -83,9 +93,20 @@ export const Column = memo(({ column }: { column: BoardColumn }) => {
         ref={headerRef}
         data-testid={`column-${columnId}`}
       >
-        <h6 className="app-board-column--title">{column.name}</h6>
-        <span className="app-board-column--title">ID: {columnId}</span>
-        <button onClick={handleAddNewColumn}>...</button>
+        <div className="app-board-column--title-container">
+          <span className="app-board-column--title">{column.name}</span>
+          <IconButton
+            icon={() => <EditIcon size="small" label="Edit" />}
+            appearance="subtle"
+            label="Edit Title"
+          />
+        </div>
+        <IconButton
+          icon={TrashIcon}
+          label="Delete Column"
+          appearance="subtle"
+          onClick={handleColumnDeleteClick}
+        />
       </div>
       <div className="app-board-column--scroll-container">
         <div className="app-board-column--card-list" ref={cardListRef}>
@@ -95,7 +116,7 @@ export const Column = memo(({ column }: { column: BoardColumn }) => {
         </div>
       </div>
       <DropIndicator edge={closestEdge} gap={16} />
-      <button>+ Create Case</button>
+      <Button onClick={handleNewCaseCreate}>Create Case</Button>
     </div>
   );
 });

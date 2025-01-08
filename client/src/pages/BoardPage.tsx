@@ -1,23 +1,23 @@
 import BaseLayout from "./BaseLayout";
 import Board from "../components/board/Board";
-import { useFetch } from "../hooks/useFetch";
-import { BOARD_COLUMNS_URL, BOARD_ID } from "../constants";
+import { useAppContext } from "../state/appContext";
 
 const BoardPage = () => {
-  const url = `${BOARD_COLUMNS_URL}?boardId=${BOARD_ID}`;
-  const { data, isPending, error } = useFetch(url);
+  const { error, isLoading, boardColumns } = useAppContext();
 
-  if (error) {
+  if (error || !boardColumns) {
     return <h1>Failed to fetch board columns</h1>;
   }
 
-  if (isPending) {
+  if (isLoading) {
     return <h1>Loading...</h1>;
   }
 
   return (
     <BaseLayout title={<h1>Board Page</h1>}>
-      {data?.items && <Board columns={data.items} />}
+      {boardColumns && (
+        <Board columns={boardColumns} />
+      )}
     </BaseLayout>
   );
 };

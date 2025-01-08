@@ -63,6 +63,11 @@ VALUES
     ('c9b19267-7a63-4a4b-9757-901c7d6b302b', 'In Progress', 'Tasks in progress', 2, 'f25fc125-cb6e-436f-8efe-6972d8a3aed6', '{"color": "yellow"}'),
     ('e0377443-dba4-4387-a3a3-5cf076a196eb', 'Quality Control', 'Tasks under review', 3, 'f25fc125-cb6e-436f-8efe-6972d8a3aed6', '{"color": "orange"}'),
     ('c6c022b6-34a7-4f02-9bf4-d06cad72b8c2', 'Done', 'Completed tasks', 4, 'f25fc125-cb6e-436f-8efe-6972d8a3aed6', '{"color": "green"}'),
+    ('85a7dcb7-fba3-4b79-b1d4-3ff235bd6fcd', 'Extra 1', 'Tasks to be done', 5, 'f25fc125-cb6e-436f-8efe-6972d8a3aed6', '{"color": "blue"}'),
+    ('5b3add2b-c621-4be0-8eac-e6bd9a86c611', 'Extra 2', 'Tasks in progress', 6, 'f25fc125-cb6e-436f-8efe-6972d8a3aed6', '{"color": "yellow"}'),
+    ('90d57547-48d4-40a7-bee5-a69011884574', 'Extra 3', 'Tasks under review', 7, 'f25fc125-cb6e-436f-8efe-6972d8a3aed6', '{"color": "orange"}'),
+    ('366f8d39-ffe8-42b6-94b9-45b04d2b6e6f', 'Extra 4', 'Completed tasks', 8, 'f25fc125-cb6e-436f-8efe-6972d8a3aed6', '{"color": "green"}'),
+
 
     -- Columns for Board 2
     ('dd434cd1-f784-47c2-a633-35f045c89e38', 'Todo', 'Tasks to be done', 1, 'd19a55e8-bf8b-4dff-b3a1-3c9ac62adfb3', '{"color": "blue"}'),

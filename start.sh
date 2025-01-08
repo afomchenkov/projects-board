@@ -6,6 +6,7 @@ set -e
 # Handle Ctrl+C (SIGINT)
 cleanup() {
     cd ..
+    echo ""
     echo "Stopping Docker Compose services..."
     docker compose -f ./docker-compose.dev.yml down
     exit 0
@@ -30,7 +31,7 @@ done
 # Step 3: Start the frontend app
 echo "Starting the frontend application..."
 cd client
-npm start
+yarn start
 
 # Keep the script running to handle Ctrl+C
 wait

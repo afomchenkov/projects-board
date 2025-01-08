@@ -5,14 +5,13 @@ import {
 } from 'typeorm';
 
 export class BaseEntity {
-  @CreateDateColumn({ name: 'id' })
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   public id: string;
 
   @CreateDateColumn({
     name: 'created_at',
     type: 'timestamptz',
-    default: () => 'CURRENT_TIMESTAMP'
+    default: () => 'CURRENT_TIMESTAMP',
   })
   public createdAt: string;
 

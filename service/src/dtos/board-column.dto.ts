@@ -3,6 +3,24 @@ import { Type } from 'class-transformer';
 import { BaseDto } from './base.dto';
 import { CaseCardDto } from './case-card.dto';
 
+export class CreateBoardColumnDto {
+  @IsDefined()
+  @IsString()
+  public name: string;
+
+  @IsDefined()
+  @IsString()
+  public description: string;
+
+  @IsDefined()
+  @IsNumber()
+  public ordinal: number;
+
+  @IsDefined()
+  @IsUUID()
+  public boardId: string;
+}
+
 export class BoardColumnDto extends BaseDto {
   @IsDefined()
   @IsString()

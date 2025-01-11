@@ -6,97 +6,17 @@ import { monitorForElements } from "@atlaskit/drag-and-drop/adapter/element";
 import { combine } from "@atlaskit/drag-and-drop/util/combine";
 import { IconButton } from "@atlaskit/button/new";
 import AddIcon from "@atlaskit/icon/glyph/add";
-import { Column } from "./Column";
-import { BoardColumn, BoardColumnsMap, ColumnCard } from "../../types";
 import { useAppContext } from "../../state/appContext";
-import { getRandomNumber } from "../../utils";
+import { getInitialData, reorderColumns } from "../../utils";
+import { Column } from "./Column";
+import {
+  BoardColumn,
+  BoardState,
+  BoardActionType,
+  BoardColumnsMap,
+  ColumnCard,
+} from "../../types";
 import "./Board.scss";
-
-type CardOrderUpdateAction = {
-  sourceColumnId: string;
-  destinationColumnId: string;
-  startIndex: number;
-  destinationIndex: number;
-};
-
-type BoardState = {
-  columnMap: BoardColumnsMap;
-  columnsOnAppLoad: BoardColumn[];
-  orderedColumnIds: string[];
-  actionType: BoardActionType;
-  cardOrderUpdateAction: CardOrderUpdateAction | null;
-};
-
-enum BoardActionType {
-  ChangeColumnsOrder = "ChangeColumnsOrder",
-  ChangeCardsOrder = "ChangeCardsOrder",
-  MoveCardToAnotherColumn = "MoveCardToAnotherColumn",
-  None = "None",
-}
-
-export const getInitialData = (boardColumns: BoardColumn[] = []) => {
-  // order columns by ordinal sequence
-  const columnsOnAppLoad = [...boardColumns].sort(
-    (a, b) => a.ordinal - b.ordinal
-  );
-  const orderedColumnIds = columnsOnAppLoad.map((column) => column.id);
-
-  const columnMap = boardColumns.reduce((acc, column) => {
-    acc[column.id] = column;
-
-    column.columnCards.sort((a, b) => a.ordinal - b.ordinal);
-
-    column.columnCards.forEach((card) => {
-      card.progress = getRandomNumber(0, 99);
-    });
-
-    return acc;
-  }, {} as BoardColumnsMap);
-
-  return {
-    columnMap,
-    columnsOnAppLoad,
-    orderedColumnIds,
-    actionType: BoardActionType.None,
-    cardOrderUpdateAction: null,
-  };
-};
-
-const reorderColumns = (boardData: BoardState) => {
-  const { columnsOnAppLoad, orderedColumnIds } = boardData;
-  const reorderedColumns: BoardColumn[] = [];
-
-  orderedColumnIds.forEach((columnId, idx) => {
-    const column = columnsOnAppLoad.find((column) => column.id === columnId);
-
-    if (column) {
-      reorderedColumns.push({ ...column, ordinal: idx + 1 });
-    }
-  });
-
-  return reorderedColumns;
-};
-
-const reorderCardsSameColumn = (
-  cards: ColumnCard[],
-  updateAction: CardOrderUpdateAction
-) => {
-  const cardsToUpdate: ColumnCard[] = [...cards];
-  const { startIndex, destinationIndex } = updateAction;
-  // move  card to a new position
-  const [movedCard] = cardsToUpdate.splice(startIndex, 1);
-  cardsToUpdate.splice(destinationIndex, 0, movedCard);
-  // update ordinal index
-  return cardsToUpdate.map((card, idx) => {
-    card.ordinal = idx + 1;
-    return card;
-  });
-};
-
-const reorderCardsDifferentColumn = (
-  columnId: string,
-  cards: ColumnCard[]
-) => {};
 
 export type BoardType = (props: {
   columns: BoardColumn[];
@@ -124,7 +44,8 @@ const Board: BoardType = ({ columns }) => {
       }
       case BoardActionType.ChangeCardsOrder: {
         if (cardOrderUpdateAction) {
-          const { columnCards } = boardData.columnMap[cardOrderUpdateAction.sourceColumnId];
+          const { columnCards } =
+            boardData.columnMap[cardOrderUpdateAction.sourceColumnId];
           updateCardsOrder(columnCards);
         }
         break;
@@ -133,11 +54,13 @@ const Board: BoardType = ({ columns }) => {
         if (cardOrderUpdateAction) {
           const { destinationColumnId } = cardOrderUpdateAction;
           const { columnCards } = boardData.columnMap[destinationColumnId];
-          
-          updateCardsOrder(columnCards.map((card) => {
-            card.boardColumnId = destinationColumnId; 
-            return card;
-          }))
+
+          updateCardsOrder(
+            columnCards.map((card) => {
+              card.boardColumnId = destinationColumnId;
+              return card;
+            })
+          );
         }
         break;
       }

@@ -6,21 +6,15 @@ import {
   useState,
   useCallback,
 } from "react";
-import { useFetch } from "../hooks/useFetch";
+import { useFetch } from "../hooks";
 import { BOARD_COLUMNS_URL, COLUMN_CARDS_URL, BOARD_ID } from "../constants";
 import { AppContext, defaultAppState } from "./appContext";
 import { BoardColumn, ColumnCard } from "../types";
-import { generateRandomStr } from "../utils";
+import { generateRandomStr, calculateNextColumnOrdinal } from "../utils";
 
 const headers = {
   Accept: "application/json",
   "Content-Type": "application/json",
-};
-
-const calculateNextColumnOrdinal = (columns: BoardColumn[]) => {
-  const ordinals = columns.map((column) => column.ordinal);
-  ordinals.sort((a, b) => a - b);
-  return (ordinals.at(-1) || 0) + 1;
 };
 
 export type AppProviderType = (params: { children: ReactNode }) => ReactElement;
@@ -185,6 +179,14 @@ export const AppProvider: AppProviderType = ({ children }) => {
     [bulkColumnsUpdateRequest]
   );
 
+  const updateColumn = useCallback(
+    async (column: BoardColumn) => {
+      console.log(column)
+      // await columnUpdateRequest()
+    },
+    []
+  );
+
   const addNewCaseCard = useCallback(async (createCardPayload: Partial<ColumnCard>) => {
     await createCardRequest({
       overrideOptions: {
@@ -223,6 +225,7 @@ export const AppProvider: AppProviderType = ({ children }) => {
       deleteColumn,
       addNewCaseCard,
       updateColumnsOrder,
+      updateColumn,
       updateCardsOrder,
     };
   }, [
@@ -233,6 +236,7 @@ export const AppProvider: AppProviderType = ({ children }) => {
     deleteColumn,
     addNewCaseCard,
     updateColumnsOrder,
+    updateColumn,
     updateCardsOrder,
   ]);
 

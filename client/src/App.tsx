@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 import { ErrorBoundary } from "react-error-boundary";
 import Navigation from "./components/Navigation";
-import { useConsole } from "./hooks/useConsole";
+import { useConsole } from "./hooks";
 import { AppProvider } from "./state/appProvider";
 import "./App.scss";
 

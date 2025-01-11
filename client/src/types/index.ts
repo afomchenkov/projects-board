@@ -21,3 +21,25 @@ export type ColumnCard = {
 }
 
 export type BoardColumnsMap = { [columnId: string]: BoardColumn };
+
+export type CardOrderUpdateAction = {
+  sourceColumnId: string;
+  destinationColumnId: string;
+  startIndex: number;
+  destinationIndex: number;
+};
+
+export type BoardState = {
+  columnMap: BoardColumnsMap;
+  columnsOnAppLoad: BoardColumn[];
+  orderedColumnIds: string[];
+  actionType: BoardActionType;
+  cardOrderUpdateAction: CardOrderUpdateAction | null;
+};
+
+export enum BoardActionType {
+  ChangeColumnsOrder = "ChangeColumnsOrder",
+  ChangeCardsOrder = "ChangeCardsOrder",
+  MoveCardToAnotherColumn = "MoveCardToAnotherColumn",
+  None = "None",
+}

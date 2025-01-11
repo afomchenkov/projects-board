@@ -9,41 +9,142 @@ import AddIcon from "@atlaskit/icon/glyph/add";
 import { Column } from "./Column";
 import { BoardColumn, BoardColumnsMap, ColumnCard } from "../../types";
 import { useAppContext } from "../../state/appContext";
+import { getRandomNumber } from "../../utils";
 import "./Board.scss";
+
+type CardOrderUpdateAction = {
+  sourceColumnId: string;
+  destinationColumnId: string;
+  startIndex: number;
+  destinationIndex: number;
+};
+
+type BoardState = {
+  columnMap: BoardColumnsMap;
+  columnsOnAppLoad: BoardColumn[];
+  orderedColumnIds: string[];
+  actionType: BoardActionType;
+  cardOrderUpdateAction: CardOrderUpdateAction | null;
+};
+
+enum BoardActionType {
+  ChangeColumnsOrder = "ChangeColumnsOrder",
+  ChangeCardsOrder = "ChangeCardsOrder",
+  MoveCardToAnotherColumn = "MoveCardToAnotherColumn",
+  None = "None",
+}
 
 export const getInitialData = (boardColumns: BoardColumn[] = []) => {
   // order columns by ordinal sequence
-  const orderedColumns = [...boardColumns].sort(
+  const columnsOnAppLoad = [...boardColumns].sort(
     (a, b) => a.ordinal - b.ordinal
   );
-  const orderedColumnIds = orderedColumns.map((column) => column.id);
+  const orderedColumnIds = columnsOnAppLoad.map((column) => column.id);
 
-  // TODO: order cards?
   const columnMap = boardColumns.reduce((acc, column) => {
     acc[column.id] = column;
+
+    column.columnCards.sort((a, b) => a.ordinal - b.ordinal);
+
+    column.columnCards.forEach((card) => {
+      card.progress = getRandomNumber(0, 99);
+    });
+
     return acc;
   }, {} as BoardColumnsMap);
 
-  return { columnMap, orderedColumns, orderedColumnIds };
+  return {
+    columnMap,
+    columnsOnAppLoad,
+    orderedColumnIds,
+    actionType: BoardActionType.None,
+    cardOrderUpdateAction: null,
+  };
 };
 
-type BoardType = (props: {
+const reorderColumns = (boardData: BoardState) => {
+  const { columnsOnAppLoad, orderedColumnIds } = boardData;
+  const reorderedColumns: BoardColumn[] = [];
+
+  orderedColumnIds.forEach((columnId, idx) => {
+    const column = columnsOnAppLoad.find((column) => column.id === columnId);
+
+    if (column) {
+      reorderedColumns.push({ ...column, ordinal: idx + 1 });
+    }
+  });
+
+  return reorderedColumns;
+};
+
+const reorderCardsSameColumn = (
+  cards: ColumnCard[],
+  updateAction: CardOrderUpdateAction
+) => {
+  const cardsToUpdate: ColumnCard[] = [...cards];
+  const { startIndex, destinationIndex } = updateAction;
+  // move  card to a new position
+  const [movedCard] = cardsToUpdate.splice(startIndex, 1);
+  cardsToUpdate.splice(destinationIndex, 0, movedCard);
+  // update ordinal index
+  return cardsToUpdate.map((card, idx) => {
+    card.ordinal = idx + 1;
+    return card;
+  });
+};
+
+const reorderCardsDifferentColumn = (
+  columnId: string,
+  cards: ColumnCard[]
+) => {};
+
+export type BoardType = (props: {
   columns: BoardColumn[];
-  // onColumnCreate: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 }) => React.JSX.Element;
 
 const Board: BoardType = ({ columns }) => {
   const ref = useRef<HTMLDivElement | null>(null);
-  const [data, setData] = useState<{
-    columnMap: BoardColumnsMap;
-    orderedColumns: BoardColumn[];
-    orderedColumnIds: string[];
-  }>(() => getInitialData(columns));
-  const { addNewColumn } = useAppContext();
+  const [boardData, setBoardData] = useState<BoardState>(() =>
+    getInitialData(columns)
+  );
+  const { addNewColumn, updateColumnsOrder, updateCardsOrder } =
+    useAppContext();
 
   const handleAddNewColumn = useCallback(() => {
     addNewColumn();
   }, [addNewColumn]);
+
+  useEffect(() => {
+    const { actionType, cardOrderUpdateAction } = boardData;
+
+    switch (actionType) {
+      case BoardActionType.ChangeColumnsOrder: {
+        updateColumnsOrder(reorderColumns(boardData));
+        break;
+      }
+      case BoardActionType.ChangeCardsOrder: {
+        if (cardOrderUpdateAction) {
+          const { columnCards } = boardData.columnMap[cardOrderUpdateAction.sourceColumnId];
+          updateCardsOrder(columnCards);
+        }
+        break;
+      }
+      case BoardActionType.MoveCardToAnotherColumn: {
+        if (cardOrderUpdateAction) {
+          const { destinationColumnId } = cardOrderUpdateAction;
+          const { columnCards } = boardData.columnMap[destinationColumnId];
+          
+          updateCardsOrder(columnCards.map((card) => {
+            card.boardColumnId = destinationColumnId; 
+            return card;
+          }))
+        }
+        break;
+      }
+      default:
+        console.warn("Board action type is not recognized.");
+    }
+  }, [boardData]);
 
   useEffect(() => {
     return combine(
@@ -55,41 +156,38 @@ const Board: BoardType = ({ columns }) => {
             return;
           }
 
-          // need to handle drop
+          // Drag/Drop a column, need to handle drop
           // 1. remove element from original position
           // 2. move to new position
           if (source.data.type === "column") {
-            const startIndex: number = data.orderedColumnIds.findIndex(
+            const startIndex: number = boardData.orderedColumnIds.findIndex(
               (columnId) => columnId === source.data.columnId
             );
 
             const target = location.current.dropTargets[0];
-            const finishIndex: number = data.orderedColumnIds.findIndex(
+            const finishIndex: number = boardData.orderedColumnIds.findIndex(
               (id) => id === target.data.columnId
             );
             const edge: Edge | null = extractClosestEdge(target.data);
 
-            const updated = reorderWithEdge({
-              list: data.orderedColumnIds,
+            const reorderedColumnsIds = reorderWithEdge({
+              list: boardData.orderedColumnIds,
               startIndex,
               finishIndex,
               edge,
               axis: "horizontal",
             });
 
-            // ON COLUMN DARG END
-            console.log("reordering column", {
-              startIndex,
-              destinationIndex: updated.findIndex(
-                (columnId) => columnId === target.data.columnId
-              ),
-              edge,
+            // on column drag end
+            setBoardData({
+              ...boardData,
+              orderedColumnIds: reorderedColumnsIds,
+              actionType: BoardActionType.ChangeColumnsOrder,
+              cardOrderUpdateAction: null,
             });
-
-            setData({ ...data, orderedColumnIds: updated });
           }
 
-          // Dragging a card
+          // Drag/Drop a card
           if (source.data.type === "card") {
             const cardId = source.data.cardId;
 
@@ -97,7 +195,7 @@ const Board: BoardType = ({ columns }) => {
             const [, startColumnRecord] = location.initial.dropTargets;
             const sourceId = startColumnRecord.data.columnId as string;
 
-            const sourceColumn = data.columnMap[sourceId];
+            const sourceColumn = boardData.columnMap[sourceId];
             const cardIndex = sourceColumn.columnCards.findIndex(
               (card) => card.id === cardId
             );
@@ -108,7 +206,7 @@ const Board: BoardType = ({ columns }) => {
               const [destinationColumnRecord] = location.current.dropTargets;
               const destinationId = destinationColumnRecord.data
                 .columnId as string;
-              const destinationColumn = data.columnMap[destinationId];
+              const destinationColumn = boardData.columnMap[destinationId];
 
               // reordering in same column
               if (sourceColumn === destinationColumn) {
@@ -120,24 +218,35 @@ const Board: BoardType = ({ columns }) => {
                   axis: "vertical",
                 });
                 const updatedMap: BoardColumnsMap = {
-                  ...data.columnMap,
+                  ...boardData.columnMap,
                   [sourceColumn.id]: {
                     ...sourceColumn,
                     columnCards: updated,
                   },
                 };
-                setData({ ...data, columnMap: updatedMap });
-                console.log("moving card to end position in same column", {
-                  startIndex: cardIndex,
-                  destinationIndex: updated.findIndex((i) => i.id === cardId),
-                  edge: null,
+                const destinationIndex = updatedMap[
+                  destinationColumn.id
+                ].columnCards.findIndex((i) => i.id === cardId);
+
+                // moving card to end position in same column
+                setBoardData({
+                  ...boardData,
+                  columnMap: updatedMap,
+                  actionType: BoardActionType.ChangeCardsOrder,
+                  cardOrderUpdateAction: {
+                    sourceColumnId: sourceColumn.id,
+                    destinationColumnId: destinationColumn.id,
+                    startIndex: cardIndex,
+                    destinationIndex,
+                  },
                 });
+
                 return;
               }
 
               // moving to a new column
               const updatedMap: BoardColumnsMap = {
-                ...data.columnMap,
+                ...boardData.columnMap,
                 [sourceColumn.id]: {
                   ...sourceColumn,
                   columnCards: sourceColumn.columnCards.filter(
@@ -152,14 +261,21 @@ const Board: BoardType = ({ columns }) => {
                   ],
                 },
               };
+              const destinationIndex = updatedMap[
+                destinationColumn.id
+              ].columnCards.findIndex((i) => i.id === cardId);
 
-              setData({ ...data, columnMap: updatedMap });
-              console.log("moving card to end position of another column", {
-                startIndex: cardIndex,
-                destinationIndex: updatedMap[
-                  destinationColumn.id
-                ].columnCards.findIndex((i) => i.id === cardId),
-                edge: null,
+              // moving card to end position of another column
+              setBoardData({
+                ...boardData,
+                columnMap: updatedMap,
+                actionType: BoardActionType.MoveCardToAnotherColumn,
+                cardOrderUpdateAction: {
+                  sourceColumnId: sourceColumn.id,
+                  destinationColumnId: destinationColumn.id,
+                  startIndex: cardIndex,
+                  destinationIndex,
+                },
               });
               return;
             }
@@ -170,7 +286,8 @@ const Board: BoardType = ({ columns }) => {
                 location.current.dropTargets;
               const destinationColumnId = destinationColumnRecord.data
                 .columnId as string;
-              const destinationColumn = data.columnMap[destinationColumnId];
+              const destinationColumn =
+                boardData.columnMap[destinationColumnId];
 
               const finishIndex = destinationColumn.columnCards.findIndex(
                 (item) => item.id === destinationCardRecord.data.cardId
@@ -193,15 +310,26 @@ const Board: BoardType = ({ columns }) => {
                   columnCards: updated,
                 };
                 const updatedMap: BoardColumnsMap = {
-                  ...data.columnMap,
+                  ...boardData.columnMap,
                   [sourceColumn.id]: updatedSourceColumn,
                 };
-                console.log("dropping relative to card in the same column", {
-                  startIndex: cardIndex,
-                  destinationIndex: updated.findIndex((i) => i.id === cardId),
-                  edge,
+                const destinationIndex = updatedMap[
+                  destinationColumn.id
+                ].columnCards.findIndex((i) => i.id === cardId);
+
+                // dropping relative to card in the same column
+                setBoardData({
+                  ...boardData,
+                  columnMap: updatedMap,
+                  actionType: BoardActionType.ChangeCardsOrder,
+                  cardOrderUpdateAction: {
+                    sourceColumnId: sourceColumn.id,
+                    destinationColumnId: destinationColumn.id,
+                    startIndex: cardIndex,
+                    destinationIndex,
+                  },
                 });
-                setData({ ...data, columnMap: updatedMap });
+
                 return;
               }
 
@@ -224,29 +352,34 @@ const Board: BoardType = ({ columns }) => {
                 columnCards: updated,
               };
               const updatedMap: BoardColumnsMap = {
-                ...data.columnMap,
+                ...boardData.columnMap,
                 [sourceColumn.id]: updatedSourceColumn,
                 [destinationColumn.id]: updatedDestinationColumn,
               };
-              console.log("dropping on a card in different column", {
-                sourceColumn: sourceColumn.id,
-                destinationColumn: destinationColumn.id,
-                startIndex: cardIndex,
-                destinationIndex,
-                edge,
+
+              // dropping on a card in different column
+              setBoardData({
+                ...boardData,
+                columnMap: updatedMap,
+                actionType: BoardActionType.MoveCardToAnotherColumn,
+                cardOrderUpdateAction: {
+                  sourceColumnId: sourceColumn.id,
+                  destinationColumnId: destinationColumn.id,
+                  startIndex: cardIndex,
+                  destinationIndex,
+                },
               });
-              setData({ ...data, columnMap: updatedMap });
             }
           }
         },
       })
     );
-  }, [data]);
+  }, [boardData]);
 
   return (
     <div className="app-board" ref={ref}>
-      {data.orderedColumnIds.map((columnId) => {
-        return <Column column={data.columnMap[columnId]} key={columnId} />;
+      {boardData.orderedColumnIds.map((columnId) => {
+        return <Column column={boardData.columnMap[columnId]} key={columnId} />;
       })}
       <IconButton
         icon={AddIcon}

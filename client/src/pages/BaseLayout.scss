@@ -1,7 +1,9 @@
 .app-base-layout {
-  overflow-x: scroll;
-  
   &__title {
     margin-bottom: 1em;
+  }
+
+  &__body {
+    overflow-x: scroll;
   }
 }

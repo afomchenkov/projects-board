@@ -1,0 +1,30 @@
+.app-board {
+  &-form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: .5em;
+
+    input {
+      outline: none;
+      margin-top: .3em;
+      margin-bottom: .5em;
+      min-height: 30px;
+      line-height: 1.4em;
+      font-size: 1em;
+      border: 1px solid var(--silver-darken-87);
+      border-radius: 3px;
+      padding: 0 5px;
+    }
+  }
+
+  &-form-label {
+    font-size: .9em;
+    color: var(--ui-dark2);
+    margin-bottom: .2em;
+  }
+
+  &-text-danger {
+    font-size: 12px;
+    color: var(--red-darken-38);
+  }
+}

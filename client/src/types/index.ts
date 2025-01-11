@@ -13,8 +13,9 @@ export type ColumnCard = {
   id: string;
   name: string;
   description: string;
-  ordinal: string;
+  ordinal: number;
   boardColumnId: string;
+  progress: number;
   createdAt: string;
   updatedAt: string;
 }

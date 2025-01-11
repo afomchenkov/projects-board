@@ -39,6 +39,7 @@ CREATE TABLE IF NOT EXISTS Case_Card (
     Ordinal BIGSERIAL NOT NULL,
     Board_Column_Id UUID NOT NULL REFERENCES Board_Column(Id),
     Metadata JSONB DEFAULT NULL,
+    Progress INTEGER DEFAULT 0,
     Created_At TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     Updated_At TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
@@ -89,59 +90,59 @@ VALUES
 
 -- Board 1
 -- For Column with Board_Column_Id '1874af08-29cb-471a-9dc3-98e1dc0ce6bb'
-INSERT INTO Case_Card (Id, Name, Description, Ordinal, Board_Column_Id, Metadata, Created_At, Updated_At)
+INSERT INTO Case_Card (Id, Name, Description, Ordinal, Progress, Board_Column_Id, Metadata, Created_At, Updated_At)
 VALUES
-  (gen_random_uuid(), 'Card 1', 'Description for card 1', nextval('case_card_ordinal_seq'), '1874af08-29cb-471a-9dc3-98e1dc0ce6bb', '{"status": "active"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-  (gen_random_uuid(), 'Card 2', 'Description for card 2', nextval('case_card_ordinal_seq'), '1874af08-29cb-471a-9dc3-98e1dc0ce6bb', '{"status": "inactive"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-  (gen_random_uuid(), 'Card 3', 'Description for card 3', nextval('case_card_ordinal_seq'), '1874af08-29cb-471a-9dc3-98e1dc0ce6bb', '{"status": "active"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+  (gen_random_uuid(), 'Card 1', 'Description for card 1', nextval('case_card_ordinal_seq'), FLOOR(RANDOM() * (100 - 5 + 1) + 5), '1874af08-29cb-471a-9dc3-98e1dc0ce6bb', '{"status": "active"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  (gen_random_uuid(), 'Card 2', 'Description for card 2', nextval('case_card_ordinal_seq'), FLOOR(RANDOM() * (100 - 5 + 1) + 5), '1874af08-29cb-471a-9dc3-98e1dc0ce6bb', '{"status": "inactive"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  (gen_random_uuid(), 'Card 3', 'Description for card 3', nextval('case_card_ordinal_seq'), FLOOR(RANDOM() * (100 - 5 + 1) + 5), '1874af08-29cb-471a-9dc3-98e1dc0ce6bb', '{"status": "active"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- For Column with Board_Column_Id 'c9b19267-7a63-4a4b-9757-901c7d6b302b'
-INSERT INTO Case_Card (Id, Name, Description, Ordinal, Board_Column_Id, Metadata, Created_At, Updated_At)
+INSERT INTO Case_Card (Id, Name, Description, Ordinal, Progress, Board_Column_Id, Metadata, Created_At, Updated_At)
 VALUES
-  (gen_random_uuid(), 'Card 4', 'Description for card 4', nextval('case_card_ordinal_seq'), 'c9b19267-7a63-4a4b-9757-901c7d6b302b', '{"status": "active"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-  (gen_random_uuid(), 'Card 5', 'Description for card 5', nextval('case_card_ordinal_seq'), 'c9b19267-7a63-4a4b-9757-901c7d6b302b', '{"status": "inactive"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-  (gen_random_uuid(), 'Card 6', 'Description for card 6', nextval('case_card_ordinal_seq'), 'c9b19267-7a63-4a4b-9757-901c7d6b302b', '{"status": "archived"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+  (gen_random_uuid(), 'Card 4', 'Description for card 4', nextval('case_card_ordinal_seq'), FLOOR(RANDOM() * (100 - 5 + 1) + 5), 'c9b19267-7a63-4a4b-9757-901c7d6b302b', '{"status": "active"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  (gen_random_uuid(), 'Card 5', 'Description for card 5', nextval('case_card_ordinal_seq'), FLOOR(RANDOM() * (100 - 5 + 1) + 5), 'c9b19267-7a63-4a4b-9757-901c7d6b302b', '{"status": "inactive"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  (gen_random_uuid(), 'Card 6', 'Description for card 6', nextval('case_card_ordinal_seq'), FLOOR(RANDOM() * (100 - 5 + 1) + 5), 'c9b19267-7a63-4a4b-9757-901c7d6b302b', '{"status": "archived"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- For Column with Board_Column_Id 'e0377443-dba4-4387-a3a3-5cf076a196eb'
-INSERT INTO Case_Card (Id, Name, Description, Ordinal, Board_Column_Id, Metadata, Created_At, Updated_At)
+INSERT INTO Case_Card (Id, Name, Description, Ordinal, Progress, Board_Column_Id, Metadata, Created_At, Updated_At)
 VALUES
-  (gen_random_uuid(), 'Card 7', 'Description for card 7', nextval('case_card_ordinal_seq'), 'e0377443-dba4-4387-a3a3-5cf076a196eb', '{"status": "active"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-  (gen_random_uuid(), 'Card 8', 'Description for card 8', nextval('case_card_ordinal_seq'), 'e0377443-dba4-4387-a3a3-5cf076a196eb', '{"status": "inactive"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-  (gen_random_uuid(), 'Card 9', 'Description for card 9', nextval('case_card_ordinal_seq'), 'e0377443-dba4-4387-a3a3-5cf076a196eb', '{"status": "active"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-  (gen_random_uuid(), 'Card 10', 'Description for card 10', nextval('case_card_ordinal_seq'), 'e0377443-dba4-4387-a3a3-5cf076a196eb', '{"status": "archived"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+  (gen_random_uuid(), 'Card 7', 'Description for card 7', nextval('case_card_ordinal_seq'), FLOOR(RANDOM() * (100 - 5 + 1) + 5), 'e0377443-dba4-4387-a3a3-5cf076a196eb', '{"status": "active"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  (gen_random_uuid(), 'Card 8', 'Description for card 8', nextval('case_card_ordinal_seq'), FLOOR(RANDOM() * (100 - 5 + 1) + 5), 'e0377443-dba4-4387-a3a3-5cf076a196eb', '{"status": "inactive"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  (gen_random_uuid(), 'Card 9', 'Description for card 9', nextval('case_card_ordinal_seq'), FLOOR(RANDOM() * (100 - 5 + 1) + 5), 'e0377443-dba4-4387-a3a3-5cf076a196eb', '{"status": "active"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  (gen_random_uuid(), 'Card 10', 'Description for card 10', nextval('case_card_ordinal_seq'), FLOOR(RANDOM() * (100 - 5 + 1) + 5), 'e0377443-dba4-4387-a3a3-5cf076a196eb', '{"status": "archived"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- For Column with Board_Column_Id 'c6c022b6-34a7-4f02-9bf4-d06cad72b8c2'
-INSERT INTO Case_Card (Id, Name, Description, Ordinal, Board_Column_Id, Metadata, Created_At, Updated_At)
+INSERT INTO Case_Card (Id, Name, Description, Ordinal, Progress, Board_Column_Id, Metadata, Created_At, Updated_At)
 VALUES
-  (gen_random_uuid(), 'Card 11', 'Description for card 11', nextval('case_card_ordinal_seq'), 'c6c022b6-34a7-4f02-9bf4-d06cad72b8c2', '{"status": "active"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-  (gen_random_uuid(), 'Card 12', 'Description for card 12', nextval('case_card_ordinal_seq'), 'c6c022b6-34a7-4f02-9bf4-d06cad72b8c2', '{"status": "inactive"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+  (gen_random_uuid(), 'Card 11', 'Description for card 11', nextval('case_card_ordinal_seq'), FLOOR(RANDOM() * (100 - 5 + 1) + 5), 'c6c022b6-34a7-4f02-9bf4-d06cad72b8c2', '{"status": "active"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  (gen_random_uuid(), 'Card 12', 'Description for card 12', nextval('case_card_ordinal_seq'), FLOOR(RANDOM() * (100 - 5 + 1) + 5), 'c6c022b6-34a7-4f02-9bf4-d06cad72b8c2', '{"status": "inactive"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 
 -- Board 2
 -- For Column with Board_Column_Id 'dd434cd1-f784-47c2-a633-35f045c89e38'
-INSERT INTO Case_Card (Id, Name, Description, Ordinal, Board_Column_Id, Metadata, Created_At, Updated_At)
+INSERT INTO Case_Card (Id, Name, Description, Ordinal, Progress, Board_Column_Id, Metadata, Created_At, Updated_At)
 VALUES
-  (gen_random_uuid(), 'Card 1', 'Description for card 1', nextval('case_card_ordinal_seq'), 'dd434cd1-f784-47c2-a633-35f045c89e38', '{"status": "active"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-  (gen_random_uuid(), 'Card 2', 'Description for card 2', nextval('case_card_ordinal_seq'), 'dd434cd1-f784-47c2-a633-35f045c89e38', '{"status": "inactive"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-  (gen_random_uuid(), 'Card 3', 'Description for card 3', nextval('case_card_ordinal_seq'), 'dd434cd1-f784-47c2-a633-35f045c89e38', '{"status": "active"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+  (gen_random_uuid(), 'Card 1', 'Description for card 1', nextval('case_card_ordinal_seq'), FLOOR(RANDOM() * (100 - 5 + 1) + 5), 'dd434cd1-f784-47c2-a633-35f045c89e38', '{"status": "active"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  (gen_random_uuid(), 'Card 2', 'Description for card 2', nextval('case_card_ordinal_seq'), FLOOR(RANDOM() * (100 - 5 + 1) + 5), 'dd434cd1-f784-47c2-a633-35f045c89e38', '{"status": "inactive"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  (gen_random_uuid(), 'Card 3', 'Description for card 3', nextval('case_card_ordinal_seq'), FLOOR(RANDOM() * (100 - 5 + 1) + 5), 'dd434cd1-f784-47c2-a633-35f045c89e38', '{"status": "active"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- For Column with Board_Column_Id '9576c76f-df5e-43c3-b10e-f49cc169cbd1'
-INSERT INTO Case_Card (Id, Name, Description, Ordinal, Board_Column_Id, Metadata, Created_At, Updated_At)
+INSERT INTO Case_Card (Id, Name, Description, Ordinal, Progress, Board_Column_Id, Metadata, Created_At, Updated_At)
 VALUES
-  (gen_random_uuid(), 'Card 4', 'Description for card 4', nextval('case_card_ordinal_seq'), '9576c76f-df5e-43c3-b10e-f49cc169cbd1', '{"status": "active"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-  (gen_random_uuid(), 'Card 5', 'Description for card 5', nextval('case_card_ordinal_seq'), '9576c76f-df5e-43c3-b10e-f49cc169cbd1', '{"status": "inactive"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-  (gen_random_uuid(), 'Card 6', 'Description for card 6', nextval('case_card_ordinal_seq'), '9576c76f-df5e-43c3-b10e-f49cc169cbd1', '{"status": "archived"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+  (gen_random_uuid(), 'Card 4', 'Description for card 4', nextval('case_card_ordinal_seq'), FLOOR(RANDOM() * (100 - 5 + 1) + 5), '9576c76f-df5e-43c3-b10e-f49cc169cbd1', '{"status": "active"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  (gen_random_uuid(), 'Card 5', 'Description for card 5', nextval('case_card_ordinal_seq'), FLOOR(RANDOM() * (100 - 5 + 1) + 5), '9576c76f-df5e-43c3-b10e-f49cc169cbd1', '{"status": "inactive"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  (gen_random_uuid(), 'Card 6', 'Description for card 6', nextval('case_card_ordinal_seq'), FLOOR(RANDOM() * (100 - 5 + 1) + 5), '9576c76f-df5e-43c3-b10e-f49cc169cbd1', '{"status": "archived"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- For Column with Board_Column_Id '7dc82915-e00e-4dae-a067-56eb8949590e'
-INSERT INTO Case_Card (Id, Name, Description, Ordinal, Board_Column_Id, Metadata, Created_At, Updated_At)
+INSERT INTO Case_Card (Id, Name, Description, Ordinal, Progress, Board_Column_Id, Metadata, Created_At, Updated_At)
 VALUES
-  (gen_random_uuid(), 'Card 7', 'Description for card 7', nextval('case_card_ordinal_seq'), '7dc82915-e00e-4dae-a067-56eb8949590e', '{"status": "active"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-  (gen_random_uuid(), 'Card 8', 'Description for card 8', nextval('case_card_ordinal_seq'), '7dc82915-e00e-4dae-a067-56eb8949590e', '{"status": "inactive"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-  (gen_random_uuid(), 'Card 9', 'Description for card 9', nextval('case_card_ordinal_seq'), '7dc82915-e00e-4dae-a067-56eb8949590e', '{"status": "active"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-  (gen_random_uuid(), 'Card 10', 'Description for card 10', nextval('case_card_ordinal_seq'), '7dc82915-e00e-4dae-a067-56eb8949590e', '{"status": "archived"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+  (gen_random_uuid(), 'Card 7', 'Description for card 7', nextval('case_card_ordinal_seq'), FLOOR(RANDOM() * (100 - 5 + 1) + 5), '7dc82915-e00e-4dae-a067-56eb8949590e', '{"status": "active"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  (gen_random_uuid(), 'Card 8', 'Description for card 8', nextval('case_card_ordinal_seq'), FLOOR(RANDOM() * (100 - 5 + 1) + 5), '7dc82915-e00e-4dae-a067-56eb8949590e', '{"status": "inactive"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  (gen_random_uuid(), 'Card 9', 'Description for card 9', nextval('case_card_ordinal_seq'), FLOOR(RANDOM() * (100 - 5 + 1) + 5), '7dc82915-e00e-4dae-a067-56eb8949590e', '{"status": "active"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  (gen_random_uuid(), 'Card 10', 'Description for card 10', nextval('case_card_ordinal_seq'), FLOOR(RANDOM() * (100 - 5 + 1) + 5), '7dc82915-e00e-4dae-a067-56eb8949590e', '{"status": "archived"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- For Column with Board_Column_Id '03afc9ff-58f8-44d7-9ce5-9ff594881c18'
-INSERT INTO Case_Card (Id, Name, Description, Ordinal, Board_Column_Id, Metadata, Created_At, Updated_At)
+INSERT INTO Case_Card (Id, Name, Description, Ordinal, Progress, Board_Column_Id, Metadata, Created_At, Updated_At)
 VALUES
-  (gen_random_uuid(), 'Card 11', 'Description for card 11', nextval('case_card_ordinal_seq'), '03afc9ff-58f8-44d7-9ce5-9ff594881c18', '{"status": "active"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-  (gen_random_uuid(), 'Card 12', 'Description for card 12', nextval('case_card_ordinal_seq'), '03afc9ff-58f8-44d7-9ce5-9ff594881c18', '{"status": "inactive"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+  (gen_random_uuid(), 'Card 11', 'Description for card 11', nextval('case_card_ordinal_seq'), FLOOR(RANDOM() * (100 - 5 + 1) + 5), '03afc9ff-58f8-44d7-9ce5-9ff594881c18', '{"status": "active"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  (gen_random_uuid(), 'Card 12', 'Description for card 12', nextval('case_card_ordinal_seq'), FLOOR(RANDOM() * (100 - 5 + 1) + 5), '03afc9ff-58f8-44d7-9ce5-9ff594881c18', '{"status": "inactive"}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);

@@ -29,6 +29,9 @@ export class CaseCardEntity extends BaseEntity {
   @Column({ name: 'board_column_id' })
   public boardColumnId: string;
 
+  @Column({ name: 'progress' })
+  public progress: number;
+
   @ManyToOne(() => BoardColumnEntity, (boardColumn) => boardColumn.id)
   @JoinColumn({ name: 'board_column_id' })
   public boardColumn: BoardColumnEntity | null;

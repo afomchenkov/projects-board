@@ -1,3 +1,4 @@
+export { BaseResponseDto } from './base.dto';
 export { AllBoardsDto, BoardDto } from './board.dto';
 export {
   AllBoardColumnsDto,

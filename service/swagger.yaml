@@ -1,0 +1,788 @@
+openapi: 3.0.0
+paths:
+  /api/v1/health/liveness:
+    get:
+      operationId: health-liveness
+      parameters: []
+      responses:
+        '200':
+          description: The Health Check is successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  info:
+                    type: object
+                    example: &ref_0
+                      database: &ref_1
+                        status: up
+                    additionalProperties:
+                      type: object
+                      required:
+                        - status
+                      properties:
+                        status:
+                          type: string
+                      additionalProperties: true
+                    nullable: true
+                  error:
+                    type: object
+                    example: {}
+                    additionalProperties:
+                      type: object
+                      required:
+                        - status
+                      properties:
+                        status:
+                          type: string
+                      additionalProperties: true
+                    nullable: true
+                  details:
+                    type: object
+                    example: *ref_0
+                    additionalProperties:
+                      type: object
+                      required:
+                        - status
+                      properties:
+                        status:
+                          type: string
+                      additionalProperties: true
+        '503':
+          description: The Health Check is not successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  info:
+                    type: object
+                    example: *ref_0
+                    additionalProperties:
+                      type: object
+                      required:
+                        - status
+                      properties:
+                        status:
+                          type: string
+                      additionalProperties: true
+                    nullable: true
+                  error:
+                    type: object
+                    example:
+                      redis: &ref_2
+                        status: down
+                        message: Could not connect
+                    additionalProperties:
+                      type: object
+                      required:
+                        - status
+                      properties:
+                        status:
+                          type: string
+                      additionalProperties: true
+                    nullable: true
+                  details:
+                    type: object
+                    example:
+                      database: *ref_1
+                      redis: *ref_2
+                    additionalProperties:
+                      type: object
+                      required:
+                        - status
+                      properties:
+                        status:
+                          type: string
+                      additionalProperties: true
+      summary: Get microservice liveness
+      tags:
+        - health
+  /api/v1/case-cards:
+    get:
+      operationId: get-all-board-cards
+      parameters: []
+      responses:
+        '200':
+          description: Successful get all cards response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AllCaseCardsDto'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+      summary: Get board cards by column ID endpoint
+      tags: &ref_3
+        - Case Cards API
+    post:
+      operationId: create-new-board-card
+      parameters: []
+      requestBody:
+        required: true
+        description: Payload to create new board card
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCaseCardDto'
+      responses:
+        '201':
+          description: Board card created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponseDto'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+      summary: Creates new board card
+      tags: *ref_3
+  /api/v1/case-cards/bulk:
+    put:
+      operationId: bulk-update-board-column
+      parameters: []
+      requestBody:
+        required: true
+        description: Payload to update board cards
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/BulkUpdateCaseCardDto'
+      responses:
+        '200':
+          description: Board cards updated
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CaseCardDto'
+        '400':
+          description: Bad request
+        '404':
+          description: Board card not found
+        '422':
+          description: Unprocessable board card entity
+        '500':
+          description: Internal server error
+      summary: Update board cards
+      tags: *ref_3
+  /api/v1/case-cards/{id}:
+    delete:
+      operationId: delete-board-card
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: The uuid for the item to delete
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Board card deleted
+        '400':
+          description: Bad request
+        '404':
+          description: Board card not found
+        '500':
+          description: Internal server error
+      summary: Permanently delete column card
+      tags: *ref_3
+  /api/v1/boards:
+    get:
+      operationId: get-all-boards
+      parameters: []
+      responses:
+        '200':
+          description: Successful get all boards response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AllBoardsDto'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+      summary: Get boards endpoint
+      tags:
+        - Boards API
+  /api/v1/board-columns:
+    get:
+      operationId: get-all-board-columns
+      parameters: []
+      responses:
+        '200':
+          description: Successful get all boards response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AllBoardColumnsDto'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+      summary: Get board columns endpoint
+      tags: &ref_4
+        - Board Columns API
+    post:
+      operationId: create-new-board-column
+      parameters: []
+      requestBody:
+        required: true
+        description: Payload to create new board column
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBoardColumnDto'
+      responses:
+        '201':
+          description: Board column created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponseDto'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+      summary: Creates new board column
+      tags: *ref_4
+  /api/v1/board-columns/bulk:
+    put:
+      operationId: bulk-update-board-column
+      parameters: []
+      requestBody:
+        required: true
+        description: Payload to update boards columns
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/BulkUpdateBoardColumnDto'
+      responses:
+        '200':
+          description: Board columns updated
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BoardColumnDto'
+        '400':
+          description: Bad request
+        '404':
+          description: Board column not found
+        '422':
+          description: Unprocessable board column entity
+        '500':
+          description: Internal server error
+      summary: Update boards columns
+      tags: *ref_4
+  /api/v1/board-columns/{id}:
+    put:
+      operationId: update-board-column
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: The uuid of requested resource
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: Payload to update board column
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateBoardColumnDto'
+      responses:
+        '200':
+          description: Board column updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BoardColumnDto'
+        '400':
+          description: Bad request
+        '404':
+          description: Board column not found
+        '422':
+          description: Unprocessable board column entity
+        '500':
+          description: Internal server error
+      summary: Update board column
+      tags: *ref_4
+    delete:
+      operationId: delete-board-column
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: The uuid for the item to delete
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Board column deleted
+        '400':
+          description: Bad request
+        '404':
+          description: Board column not found
+        '500':
+          description: Internal server error
+      summary: Permanently delete board column
+      tags: *ref_4
+  /api/v1/projects:
+    get:
+      operationId: get-all-projects
+      parameters: []
+      responses:
+        '200':
+          description: Successful get all projects response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AllProjectsDto'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+      summary: Get projects endpoint
+      tags:
+        - Projects API
+info:
+  title: boards service
+  description: boards sandbox MS
+  version: 0.0.1
+  contact: {}
+tags: []
+servers: []
+components:
+  schemas:
+    CaseCardDto:
+      type: object
+      properties:
+        id:
+          type: string
+          nullable: false
+          description: Entity unique identifier
+          example: ce2c97af-17e4-4d85-8248-d7ba8b45527f
+          format: uuid
+        createdAt:
+          type: string
+          nullable: false
+          description: Date of creation
+          example: '2023-01-01T00:00:00.000Z'
+        updatedAt:
+          type: string
+          nullable: false
+          description: Date of update
+          example: '2023-01-01T00:00:00.000Z'
+        name:
+          type: string
+          description: Card name
+          nullable: false
+          example: My first card name
+        description:
+          type: string
+          description: Card description
+          nullable: false
+          example: My first card description
+        ordinal:
+          type: number
+          description: Sequential number of card in column
+          nullable: false
+          example: 23
+        progress:
+          type: number
+          description: Card progress [0, 100]
+          nullable: false
+          example: 34
+        metadata:
+          type: object
+          description: Card metadata - additional card data
+          nullable: true
+          example:
+            status: active
+            priority: high
+        boardColumnId:
+          type: string
+          description: ID of assigned board
+          example: ce2c97af-17e4-4d85-8248-d7ba8b45527f
+          format: uuid
+      required:
+        - id
+        - createdAt
+        - updatedAt
+        - name
+        - description
+        - ordinal
+        - progress
+    AllCaseCardsDto:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CaseCardDto'
+        itemsCount:
+          type: number
+          description: Number of items
+          nullable: false
+      required:
+        - itemsCount
+    CreateCaseCardDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Card name
+          nullable: false
+          example: My first card name
+        description:
+          type: string
+          description: Card description
+          nullable: false
+          example: My first card description
+        ordinal:
+          type: number
+          description: Serial of the card in the column
+          nullable: false
+          example: 3
+        progress:
+          type: number
+          description: Card progress [0, 100]
+          nullable: false
+          example: 34
+        boardColumnId:
+          type: string
+          nullable: false
+          description: ID of assigned column
+          example: ce2c97af-17e4-4d85-8248-d7ba8b45527f
+          format: uuid
+      required:
+        - name
+        - description
+        - ordinal
+        - progress
+        - boardColumnId
+    BaseResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+          nullable: false
+          description: Entity unique identifier
+          example: ce2c97af-17e4-4d85-8248-d7ba8b45527f
+          format: uuid
+      required:
+        - id
+    BulkUpdateCaseCardDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Card name
+          example: My first card name
+        description:
+          type: string
+          description: Card description
+          example: My first card description
+        ordinal:
+          type: number
+          description: Serial of the card in the card
+        progress:
+          type: number
+          description: Card progress
+        boardColumnId:
+          type: string
+          description: ID of assigned board
+          example: ce2c97af-17e4-4d85-8248-d7ba8b45527f
+          format: uuid
+        id:
+          type: string
+          description: ID of card
+          example: ce2c97af-17e4-4d85-8248-d7ba8b45527f
+          format: uuid
+    BoardColumnDto:
+      type: object
+      properties:
+        id:
+          type: string
+          nullable: false
+          description: Entity unique identifier
+          example: ce2c97af-17e4-4d85-8248-d7ba8b45527f
+          format: uuid
+        createdAt:
+          type: string
+          nullable: false
+          description: Date of creation
+          example: '2023-01-01T00:00:00.000Z'
+        updatedAt:
+          type: string
+          nullable: false
+          description: Date of update
+          example: '2023-01-01T00:00:00.000Z'
+        name:
+          type: string
+          description: Column name
+          nullable: false
+          example: My first column name
+        description:
+          type: string
+          description: Column description
+          nullable: false
+          example: My first column description
+        ordinal:
+          type: number
+          description: Serial of the column on the board
+          nullable: false
+        boardId:
+          type: string
+          nullable: false
+          description: ID of assigned board
+          example: ce2c97af-17e4-4d85-8248-d7ba8b45527f
+          format: uuid
+        metadata:
+          type: object
+          description: Board column metadata - additional column data
+          nullable: true
+          example:
+            status: active
+            priority: high
+        columnCards:
+          description: Column Cards
+          type: array
+          items:
+            $ref: '#/components/schemas/CaseCardDto'
+      required:
+        - id
+        - createdAt
+        - updatedAt
+        - name
+        - description
+        - ordinal
+        - boardId
+    BoardDto:
+      type: object
+      properties:
+        id:
+          type: string
+          nullable: false
+          description: Entity unique identifier
+          example: ce2c97af-17e4-4d85-8248-d7ba8b45527f
+          format: uuid
+        createdAt:
+          type: string
+          nullable: false
+          description: Date of creation
+          example: '2023-01-01T00:00:00.000Z'
+        updatedAt:
+          type: string
+          nullable: false
+          description: Date of update
+          example: '2023-01-01T00:00:00.000Z'
+        name:
+          type: string
+          description: Board name
+          nullable: false
+          example: My first board name
+        description:
+          type: string
+          description: Board description
+          nullable: false
+          example: My first board description
+        projectId:
+          type: string
+          nullable: false
+          description: ID of assigned project
+          example: ce2c97af-17e4-4d85-8248-d7ba8b45527f
+          format: uuid
+        metadata:
+          type: object
+          description: Board metadata - additional board data
+          nullable: true
+          example:
+            status: active
+            priority: high
+        boardColumns:
+          description: Board columns
+          type: array
+          items:
+            $ref: '#/components/schemas/BoardColumnDto'
+      required:
+        - id
+        - createdAt
+        - updatedAt
+        - name
+        - description
+        - projectId
+    AllBoardsDto:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/BoardDto'
+        itemsCount:
+          type: number
+          description: Number of items
+          nullable: false
+      required:
+        - itemsCount
+    AllBoardColumnsDto:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/BoardColumnDto'
+        itemsCount:
+          type: number
+          description: Number of items
+          nullable: false
+      required:
+        - itemsCount
+    CreateBoardColumnDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Column name
+          nullable: false
+          example: My first column name
+        description:
+          type: string
+          description: Column description
+          nullable: false
+          example: My first column description
+        ordinal:
+          type: number
+          description: Serial of the column on the board
+          nullable: false
+          example: 1
+        boardId:
+          type: string
+          nullable: false
+          description: ID of assigned board
+          example: ce2c97af-17e4-4d85-8248-d7ba8b45527f
+          format: uuid
+      required:
+        - name
+        - description
+        - ordinal
+        - boardId
+    BulkUpdateBoardColumnDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Column name
+          example: My first column name
+        description:
+          type: string
+          description: Column description
+          example: My first column description
+        ordinal:
+          type: number
+          description: Serial of the column on the board
+        boardId:
+          type: string
+          description: ID of assigned board
+          example: ce2c97af-17e4-4d85-8248-d7ba8b45527f
+          format: uuid
+        id:
+          type: string
+          description: ID of column
+          example: ce2c97af-17e4-4d85-8248-d7ba8b45527f
+          format: uuid
+    UpdateBoardColumnDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Column name
+          example: My first column name
+        description:
+          type: string
+          description: Column description
+          example: My first column description
+        ordinal:
+          type: number
+          description: Serial of the column on the board
+        boardId:
+          type: string
+          description: ID of assigned board
+          example: ce2c97af-17e4-4d85-8248-d7ba8b45527f
+          format: uuid
+    ProjectDto:
+      type: object
+      properties:
+        id:
+          type: string
+          nullable: false
+          description: Entity unique identifier
+          example: ce2c97af-17e4-4d85-8248-d7ba8b45527f
+          format: uuid
+        createdAt:
+          type: string
+          nullable: false
+          description: Date of creation
+          example: '2023-01-01T00:00:00.000Z'
+        updatedAt:
+          type: string
+          nullable: false
+          description: Date of update
+          example: '2023-01-01T00:00:00.000Z'
+        name:
+          type: string
+          description: Project name
+          nullable: false
+          example: My first project name
+        description:
+          type: string
+          description: Project description
+          nullable: false
+          example: My first project description
+        metadata:
+          type: object
+          description: Project metadata - additional project data
+          nullable: true
+          example:
+            status: active
+        boards:
+          description: Project boards
+          type: array
+          items:
+            $ref: '#/components/schemas/BoardDto'
+      required:
+        - id
+        - createdAt
+        - updatedAt
+        - name
+        - description
+    AllProjectsDto:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProjectDto'
+        itemsCount:
+          type: number
+          description: Number of items
+          nullable: false
+      required:
+        - itemsCount

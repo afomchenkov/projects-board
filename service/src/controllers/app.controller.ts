@@ -1,17 +1,22 @@
 import { Controller, Get, HttpCode } from '@nestjs/common';
+import { ApiOperation, ApiResponse, ApiServiceUnavailableResponse, ApiTags } from '@nestjs/swagger';
 import { HealthCheck } from '@nestjs/terminus';
 import { HealthService } from '../services';
 
-@Controller()
+@Controller('health')
+@ApiTags('health')
 export class AppController {
   constructor(
     private readonly healthService: HealthService,
   ) { }
 
-  @Get('/healthcheck')
+  @Get('/liveness')
   @HealthCheck()
   @HttpCode(200)
-  healthcheck(): object {
+  @ApiOperation({ summary: 'Get microservice liveness', operationId: 'health-liveness' })
+  @ApiResponse({ status: 200, type: Object, description: 'The Health Check is successful' })
+  @ApiServiceUnavailableResponse({ description: 'The Health Check is not successful' })
+  healthcheck(): Object {
     return this.healthService.checkTerminus();
   }
 }

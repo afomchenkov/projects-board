@@ -1,16 +1,22 @@
 import {
   Controller,
-  Get,
-  Post,
-  Body,
-  InternalServerErrorException,
   Logger,
+  InternalServerErrorException,
+  Get,
   HttpCode,
 } from '@nestjs/common';
+import {
+  ApiBadRequestResponse,
+  ApiInternalServerErrorResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import { BoardService } from '../services';
 import { AllBoardsDto } from '../dtos';
 
 @Controller('boards')
+@ApiTags('Boards API')
 export class BoardController {
   private logger: Logger = new Logger(BoardController.name);
 
@@ -18,6 +24,16 @@ export class BoardController {
 
   @Get('/')
   @HttpCode(200)
+  @ApiOperation({
+    summary: 'Get boards endpoint',
+    operationId: 'get-all-boards',
+  })
+  @ApiOkResponse({
+    description: 'Successful get all boards response',
+    type: AllBoardsDto,
+  })
+  @ApiBadRequestResponse({ description: 'Bad request' })
+  @ApiInternalServerErrorResponse({ description: 'Internal server error' })
   async getAllBoards(): Promise<AllBoardsDto> {
     try {
       const items = await this.boardService.findAll();

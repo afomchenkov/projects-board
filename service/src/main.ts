@@ -1,10 +1,32 @@
 import { hostname } from 'os';
+import { promises as fs } from 'node:fs';
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
+import { INestApplication, Logger, ValidationPipe, VersioningType } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import { WinstonModule, utilities } from 'nest-winston';
 import { format, transports } from 'winston';
+import { dump } from 'js-yaml';
 import { AppModule } from './app.module';
+
+const setupSwagger = async (app: INestApplication): Promise<void> => {
+  const documentBuilder = new DocumentBuilder()
+    .setTitle('boards service')
+    .setDescription('boards sandbox MS')
+    .setVersion('0.0.1')
+    .build();
+
+  const document = SwaggerModule.createDocument(app, documentBuilder);
+
+  SwaggerModule.setup('api/v1/docs', app, document, {
+    customSiteTitle: 'Swagger documentation',
+  });
+
+  // generate new doc in dev mode
+  if (process.env.NODE_ENV === 'development') {
+    await fs.writeFile('swagger.yaml', dump(document));
+  }
+};
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -56,6 +78,8 @@ async function bootstrap() {
       },
     }),
   );
+
+  await setupSwagger(app);
 
   await app.listen(port);
 }

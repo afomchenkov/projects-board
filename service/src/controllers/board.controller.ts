@@ -17,6 +17,7 @@ export class BoardController {
   constructor(private readonly boardService: BoardService) { }
 
   @Get('/')
+  @HttpCode(200)
   async getAllBoards(): Promise<AllBoardsDto> {
     try {
       const items = await this.boardService.findAll();

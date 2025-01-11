@@ -1,7 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateBoardColumnDto } from '../dtos';
+import {
+  BulkUpdateBoardColumnDto,
+  CreateBoardColumnDto,
+  UpdateBoardColumnDto,
+} from '../dtos';
 import { BoardColumnEntity, CaseCardEntity } from '../entities';
 
 @Injectable()
@@ -34,10 +38,44 @@ export class BoardColumnService {
     return this.boardColumnRepository.save(newColumn);
   }
 
-  async remove(id: string): Promise<void> {
-    // delete board column
-    await this.boardColumnRepository.delete(id);
+  async update(id: string, payload: UpdateBoardColumnDto): Promise<BoardColumnEntity | null> {
+    const existingRecord = await this.findOne(id);
+
+    if (!existingRecord) {
+      throw new NotFoundException(`The Column record not found: ${id}`);
+    }
+
+    return this.boardColumnRepository.save({
+      ...existingRecord,
+      ...payload,
+    });
+  }
+
+  async bulkUpdate(payload: BulkUpdateBoardColumnDto[] = []): Promise<BoardColumnEntity[]> {
+    const updatedItems: BoardColumnEntity[] = [];
+
+    for (const updateBoardColumnPayload of payload) {
+      const { id } = updateBoardColumnPayload;
+
+      const updatedRecord = await this.update(id, updateBoardColumnPayload);
+
+      updatedItems.push(updatedRecord);
+    }
+
+    return updatedItems;
+  }
+
+  async delete(id: string): Promise<void> {
+    const existingColumn = await this.findOne(id);
+
+    if (!existingColumn) {
+      throw new NotFoundException(`The Column record not found: ${id}`);
+    }
+
     // delete assigned case cards
     await this.caseCardRepository.delete({ boardColumnId: id });
+
+    // delete board column
+    await this.boardColumnRepository.delete(id);
   }
 }

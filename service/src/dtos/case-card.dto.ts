@@ -20,6 +20,30 @@ export class CreateCaseCardDto {
   public boardColumnId: string;
 }
 
+export class UpdateCaseCardDto {
+  @IsOptional()
+  @IsString()
+  public name: string;
+
+  @IsOptional()
+  @IsString()
+  public description: string;
+
+  @IsOptional()
+  @IsNumber()
+  public ordinal: number;
+
+  @IsOptional()
+  @IsUUID()
+  public boardColumnId: string;
+}
+
+export class BulkUpdateCaseCardDto extends UpdateCaseCardDto {
+  @IsDefined()
+  @IsUUID()
+  readonly id: string;
+}
+
 export class CaseCardDto extends BaseDto {
   @IsDefined()
   @IsString()

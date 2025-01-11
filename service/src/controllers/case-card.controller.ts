@@ -12,7 +12,12 @@ import {
   Query,
 } from '@nestjs/common';
 import { CaseCardService } from '../services';
-import { AllCaseCardsDto, CreateCaseCardDto } from '../dtos';
+import {
+  AllCaseCardsDto,
+  BulkUpdateCaseCardDto,
+  CaseCardDto,
+  CreateCaseCardDto,
+} from '../dtos';
 
 @Controller('case-cards')
 export class CaseCardController {
@@ -55,8 +60,24 @@ export class CaseCardController {
     }
   }
 
-  @Delete('/:id')
+  @Put('/bulk')
   @HttpCode(200)
+  async bulkUpdateCaseCard(
+    @Body() payload: BulkUpdateCaseCardDto[],
+  ): Promise<CaseCardDto[]> {
+    try {
+      const updatedCards = await this.caseCardService.bulkUpdate(payload);
+
+      return updatedCards;
+    } catch (error) {
+      this.logger.error(JSON.stringify(error));
+
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
+  @Delete('/:id')
+  @HttpCode(204)
   async deleteBCaseCard(@Param('id') id: string): Promise<void> {
     try {
       await this.caseCardService.remove(id);

@@ -17,6 +17,7 @@ export class ProjectController {
   constructor(private readonly projectService: ProjectService) { }
 
   @Get('/')
+  @HttpCode(200)
   async getAllProjects(): Promise<AllProjectsDto> {
     try {
       const items = await this.projectService.findAll();

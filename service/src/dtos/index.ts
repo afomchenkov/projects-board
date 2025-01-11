@@ -1,4 +1,16 @@
-export { BoardDto, AllBoardsDto } from './board.dto';
-export { BoardColumnDto, AllBoardColumnsDto, CreateBoardColumnDto } from './board-column.dto';
-export { CreateCaseCardDto, CaseCardDto, AllCaseCardsDto } from './case-card.dto';
-export { ProjectDto, AllProjectsDto } from './project.dto';
+export { AllBoardsDto, BoardDto } from './board.dto';
+export {
+  AllBoardColumnsDto,
+  BoardColumnDto,
+  BulkUpdateBoardColumnDto,
+  CreateBoardColumnDto,
+  UpdateBoardColumnDto
+} from './board-column.dto';
+export {
+  AllCaseCardsDto,
+  BulkUpdateCaseCardDto,
+  CreateCaseCardDto,
+  CaseCardDto,
+  UpdateCaseCardDto,
+} from './case-card.dto';
+export { AllProjectsDto, ProjectDto } from './project.dto';

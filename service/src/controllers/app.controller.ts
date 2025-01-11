@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, HttpCode } from '@nestjs/common';
 import { HealthCheck } from '@nestjs/terminus';
 import { HealthService } from '../services';
 
@@ -10,6 +10,7 @@ export class AppController {
 
   @Get('/healthcheck')
   @HealthCheck()
+  @HttpCode(200)
   healthcheck(): object {
     return this.healthService.checkTerminus();
   }

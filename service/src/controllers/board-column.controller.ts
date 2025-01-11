@@ -10,9 +10,16 @@ import {
   Logger,
   HttpCode,
   Query,
+  BadRequestException,
 } from '@nestjs/common';
 import { BoardColumnService } from '../services';
-import { AllBoardColumnsDto, BoardColumnDto, CreateBoardColumnDto } from '../dtos';
+import {
+  AllBoardColumnsDto,
+  BoardColumnDto,
+  BulkUpdateBoardColumnDto,
+  CreateBoardColumnDto,
+  UpdateBoardColumnDto,
+} from '../dtos';
 
 @Controller('board-columns')
 export class BoardColumnController {
@@ -55,14 +62,36 @@ export class BoardColumnController {
     }
   }
 
+  @Put('/bulk')
+  @HttpCode(200)
+  async bulkUpdateBoardColumn(
+    @Body() payload: BulkUpdateBoardColumnDto[],
+  ): Promise<BoardColumnDto[]> {
+    try {
+      const updatedColumns = await this.boardColumnService.bulkUpdate(payload);
+
+      return updatedColumns;
+    } catch (error) {
+      this.logger.error(JSON.stringify(error));
+
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
   @Put('/:id')
-  @HttpCode(201)
+  @HttpCode(200)
   async updateBoardColumn(
     @Param('id') id: string,
-    @Body() payload: BoardColumnDto,
+    @Body() payload: UpdateBoardColumnDto,
   ): Promise<BoardColumnDto> {
+    if (!id) {
+      throw new BadRequestException('Column ID is required');
+    }
+
     try {
-      return Promise.resolve(null);
+      const updatedColumn = await this.boardColumnService.update(id, payload);
+
+      return updatedColumn;
     } catch (error) {
       this.logger.error(JSON.stringify(error));
 
@@ -71,10 +100,10 @@ export class BoardColumnController {
   }
 
   @Delete('/:id')
-  @HttpCode(200)
+  @HttpCode(204)
   async deleteBoardColumn(@Param('id') id: string): Promise<void> {
     try {
-      await this.boardColumnService.remove(id);
+      await this.boardColumnService.delete(id);
 
       return Promise.resolve(null);
     } catch (error) {

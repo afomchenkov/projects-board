@@ -21,6 +21,30 @@ export class CreateBoardColumnDto {
   public boardId: string;
 }
 
+export class UpdateBoardColumnDto {
+  @IsOptional()
+  @IsString()
+  public name: string;
+
+  @IsOptional()
+  @IsString()
+  public description: string;
+
+  @IsOptional()
+  @IsNumber()
+  public ordinal: number;
+
+  @IsOptional()
+  @IsUUID()
+  public boardId: string;
+}
+
+export class BulkUpdateBoardColumnDto extends UpdateBoardColumnDto {
+  @IsDefined()
+  @IsUUID()
+  readonly id: string;
+}
+
 export class BoardColumnDto extends BaseDto {
   @IsDefined()
   @IsString()

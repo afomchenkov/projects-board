@@ -27,16 +27,23 @@ const Board: BoardType = ({ columns }) => {
   const [boardData, setBoardData] = useState<BoardState>(() =>
     getInitialData(columns)
   );
-  const { addNewColumn, updateColumnsOrder, updateCardsOrder } =
-    useAppContext();
+  const {
+    error,
+    isLoading,
+    boardColumns,
+    addNewColumn,
+    updateColumnsOrder,
+    updateCardsOrder,
+  } = useAppContext();
 
   const handleAddNewColumn = useCallback(() => {
     addNewColumn();
   }, [addNewColumn]);
 
+  console.log(" 2 >>> ", { error, isLoading, boardColumns });
+
   useEffect(() => {
     const { actionType, cardOrderUpdateAction } = boardData;
-
     switch (actionType) {
       case BoardActionType.ChangeColumnsOrder: {
         updateColumnsOrder(reorderColumns(boardData));
@@ -64,9 +71,13 @@ const Board: BoardType = ({ columns }) => {
         }
         break;
       }
-      default:
+      case BoardActionType.None:
+        break;
+      default: {
         console.warn("Board action type is not recognized.");
+      }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [boardData]);
 
   useEffect(() => {

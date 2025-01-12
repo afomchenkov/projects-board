@@ -4,7 +4,7 @@
     padding: calc(var(--grid) * 2) calc(var(--grid) * 2) calc(var(--grid) * 1);
     justify-content: space-between;
     flex-direction: row;
-    color: var(--ds-text-subtlest, red);
+    color: var(--ds-text-subtlest);
     cursor: grab;
     align-items: center;
     box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px 0px;
@@ -23,21 +23,22 @@
     margin-right: 0.5em;
     border-radius: 4px;
     border: 1px solid transparent;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 11em;
   }
 
-  .--title-editable {
-    display: flex;
-    outline: none;
+  &--title-editable {
+    width: 9em;
+    height: 2em;
     line-height: 1.4em;
-    min-height: 25px;
     font-size: 0.9em;
     font-weight: 400;
-    text-transform: none;
-    border: 1px solid var(--silver-darken-87);
+    margin-right: 5px;
     border-radius: 3px;
-    align-items: center;
     padding: 0 5px;
+    border: 1px solid var(--silver-darken-87);
     background-color: var(--white-base);
-    cursor: text;
   }
 }

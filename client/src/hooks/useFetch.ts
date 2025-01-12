@@ -1,19 +1,7 @@
 import { useCallback, useState, useEffect } from "react";
+import { parseJson, sleep } from "../utils";
 
-const parseJson = async (response: Response) => {
-  const text = await response.text()
-
-  try {
-    const json = JSON.parse(text);
-    return json;
-  } catch (error) {
-    console.warn(`Invalid JSON object in HTTP response: "${text}"`);
-  }
-
-  return null;
-}
-
-export type Dispatch = (dispatchParams?: { overrideUrl?: string; overrideOptions?: object; }) => Promise<void>;
+export type Dispatch = (dispatchParams?: { overrideUrl?: string; overrideOptions?: object; }) => Promise<unknown>;
 
 export type UseFetch = (url: string, options?: object, isEager?: boolean) => {
   data: any;
@@ -34,13 +22,19 @@ export const useFetch: UseFetch = (url, options, isEager = true) => {
 
     try {
       const response = await fetch(overrideUrl ?? url, { ...options, ...overrideOptions });
+
+      // imitate latency
+      await sleep(500);
+
       if (!response.ok) {
         throw new Error(response.statusText);
       }
 
-      const json = await parseJson(response);
+      const json = await parseJson(response) || null;
 
       setData(json);
+
+      return json;
     } catch (error) {
       setError(JSON.stringify(error));
     } finally {

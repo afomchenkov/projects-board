@@ -23,7 +23,7 @@ import { calculateNextCardOrdinal } from "../../utils";
 import { ColumnHeader } from "./ColumnHeader";
 import "./Column.scss";
 
-const modalStyles = {
+const createCardModalStyles = {
   content: {
     top: "50%",
     left: "50%",
@@ -45,6 +45,7 @@ export type ColumnType = (props: { column: BoardColumn }) => React.JSX.Element;
 
 export const Column = memo<ColumnType>(({ column }) => {
   const { id: columnId, columnCards } = column;
+
   const columnRef = useRef<HTMLDivElement | null>(null);
   const headerRef = useRef<HTMLDivElement | null>(null);
   const cardListRef = useRef<HTMLDivElement | null>(null);
@@ -144,7 +145,7 @@ export const Column = memo<ColumnType>(({ column }) => {
       <Modal
         isOpen={isCreateCaseModalOpened}
         ariaHideApp={false}
-        style={modalStyles}
+        style={createCardModalStyles}
       >
         <section className="app-board-column__modal">
           <div className="app-board-column__modal-header">

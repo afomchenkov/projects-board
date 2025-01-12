@@ -6,7 +6,7 @@ import { useAppContext } from "../state/appContext";
 const BoardPage = () => {
   const { error, isLoading, boardColumns } = useAppContext();
 
-  console.log(">>> ", { error, isLoading, boardColumns });
+  console.log(" 1 >>> ", { error, isLoading, boardColumns });
 
   if (error || !boardColumns) {
     return <h1>Failed to fetch board columns</h1>;

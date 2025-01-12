@@ -42,7 +42,7 @@ export const generateRandomStr = (length: number): string => {
 }
 
 export const getRandomNumber = (min: number, max: number) => {
-  return Math.random() * (max - min) + min;
+  return Math.floor(Math.random() * (max - min) + min);
 }
 
 export const calculateNextColumnOrdinal = (columns: BoardColumn[]) => {
@@ -129,3 +129,18 @@ export const reorderCardsSameColumn = (
     return card;
   });
 };
+
+export const parseJson = async (response: Response) => {
+  const text = await response.text()
+
+  try {
+    const json = JSON.parse(text);
+    return json;
+  } catch (error) {
+    console.warn(`Invalid JSON object in HTTP response: "${text}"`);
+  }
+
+  return null;
+}
+
+export const sleep = (time: number) => new Promise((res) => setTimeout(() => res(void 0), time));

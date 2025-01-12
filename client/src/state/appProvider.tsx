@@ -6,11 +6,16 @@ import {
   useState,
   useCallback,
 } from "react";
+import { toast } from "react-toastify";
 import { useFetch } from "../hooks";
 import { BOARD_COLUMNS_URL, COLUMN_CARDS_URL, BOARD_ID } from "../constants";
 import { AppContext, defaultAppState } from "./appContext";
 import { BoardColumn, ColumnCard } from "../types";
-import { generateRandomStr, calculateNextColumnOrdinal } from "../utils";
+import {
+  getRandomNumber,
+  generateRandomStr,
+  calculateNextColumnOrdinal,
+} from "../utils";
 
 const headers = {
   Accept: "application/json",
@@ -55,23 +60,16 @@ export const AppProvider: AppProviderType = ({ children }) => {
     false
   );
 
-  const {
-    isPending: isBulkColumnsUpdateLoading,
-    error: bulkColumnsUpdateError,
-    dispatch: bulkColumnsUpdateRequest,
-  } = useFetch(
-    `${BOARD_COLUMNS_URL}/bulk`,
-    {
-      method: "PUT",
-    },
-    false
-  );
+  const { error: bulkColumnsUpdateError, dispatch: bulkColumnsUpdateRequest } =
+    useFetch(
+      `${BOARD_COLUMNS_URL}/bulk`,
+      {
+        method: "PUT",
+      },
+      false
+    );
 
-  const {
-    isPending: isColumnUpdateLoading,
-    error: columnUpdateError,
-    dispatch: columnUpdateRequest,
-  } = useFetch(
+  const { error: columnUpdateError, dispatch: columnUpdateRequest } = useFetch(
     `${BOARD_COLUMNS_URL}`,
     {
       method: "PUT",
@@ -79,17 +77,14 @@ export const AppProvider: AppProviderType = ({ children }) => {
     false
   );
 
-  const {
-    isPending: isBulkCardUpdateLoading,
-    error: bulkCardUpdateError,
-    dispatch: bulkCardUpdateRequest,
-  } = useFetch(
-    `${COLUMN_CARDS_URL}/bulk`,
-    {
-      method: "PUT",
-    },
-    false
-  );
+  const { error: bulkCardUpdateError, dispatch: bulkCardUpdateRequest } =
+    useFetch(
+      `${COLUMN_CARDS_URL}/bulk`,
+      {
+        method: "PUT",
+      },
+      false
+    );
 
   const {
     isPending: isCreateCardLoading,
@@ -103,6 +98,7 @@ export const AppProvider: AppProviderType = ({ children }) => {
     false
   );
 
+  // load board items on init
   useEffect(() => {
     if (!isBoardColumnsLoading && !loadColumnsError) {
       setBoardColumns(data?.items || []);
@@ -115,24 +111,50 @@ export const AppProvider: AppProviderType = ({ children }) => {
     setIsLoading(isBoardColumnsLoading);
   }, [loadColumnsError, isBoardColumnsLoading, data]);
 
-  // reload columns after column delete/create
+  // reload columns after column delete/create or new card create
   useEffect(() => {
-    if (deleteColumnsError || createColumnsError) {
-      setError(deleteColumnsError);
+    const fetchError =
+      deleteColumnsError || createColumnsError || createCardError;
+    if (fetchError) {
+      setError(fetchError);
     }
 
-    if (!isDeleteBoardColumnsLoading && !isCreateBoardColumnsLoading) {
+    const shouldReloadBoardColumns =
+      !isDeleteBoardColumnsLoading &&
+      !isCreateBoardColumnsLoading &&
+      !isCreateCardLoading;
+    if (shouldReloadBoardColumns) {
       fetchBoardColumns();
     }
-
-    setIsLoading(isDeleteBoardColumnsLoading || isCreateBoardColumnsLoading);
   }, [
+    isCreateCardLoading,
     isCreateBoardColumnsLoading,
-    createColumnsError,
     isDeleteBoardColumnsLoading,
+    createColumnsError,
     deleteColumnsError,
+    createCardError,
     fetchBoardColumns,
   ]);
+
+  useEffect(() => {
+    if (bulkColumnsUpdateError) {
+      toast.error("Error occurred while updating the columns", {
+        pauseOnHover: true,
+      });
+    }
+
+    if (columnUpdateError) {
+      toast.error("Error occurred while updating the column data", {
+        pauseOnHover: true,
+      });
+    }
+
+    if (bulkCardUpdateError) {
+      toast.error("Error occurred while updating the cards", {
+        pauseOnHover: true,
+      });
+    }
+  }, [bulkColumnsUpdateError, columnUpdateError, bulkCardUpdateError]);
 
   const addNewColumn = useCallback(async () => {
     const createColumnPayload = {
@@ -169,51 +191,86 @@ export const AppProvider: AppProviderType = ({ children }) => {
         ordinal: column.ordinal,
       }));
 
-      await bulkColumnsUpdateRequest({
+      const response = await bulkColumnsUpdateRequest({
         overrideOptions: {
           headers,
           body: JSON.stringify(updatePayload),
         },
       });
+
+      if (response) {
+        toast.success("Columns have been updated", {
+          autoClose: 2000,
+        });
+      }
     },
     [bulkColumnsUpdateRequest]
   );
 
   const updateColumn = useCallback(
     async (column: BoardColumn) => {
-      console.log(column)
-      // await columnUpdateRequest()
+      const response = await columnUpdateRequest({
+        overrideUrl: `${BOARD_COLUMNS_URL}/${column.id}`,
+        overrideOptions: {
+          headers,
+          body: JSON.stringify(column),
+        },
+      });
+
+      if (response) {
+        toast.success(`Column updated: ${(response as BoardColumn).name}`, {
+          autoClose: 2000,
+          pauseOnHover: true,
+        });
+      }
     },
-    []
+    [columnUpdateRequest]
   );
 
-  const addNewCaseCard = useCallback(async (createCardPayload: Partial<ColumnCard>) => {
-    await createCardRequest({
-      overrideOptions: {
-        headers,
-        body: JSON.stringify(createCardPayload),
-      },
-    });
-  }, [createCardRequest]);
+  const addNewCaseCard = useCallback(
+    async (createCardPayload: Partial<ColumnCard>) => {
+      const payload = {
+        ...createCardPayload,
+        progress: getRandomNumber(5, 99),
+      };
 
-  const updateCardsOrder = useCallback(async (cards: ColumnCard[]) => {
-    const updateCardsPayload = cards.map((card, idx) => {
-      const { id, boardColumnId } = card;
+      await createCardRequest({
+        overrideOptions: {
+          headers,
+          body: JSON.stringify(payload),
+        },
+      });
+    },
+    [createCardRequest]
+  );
 
-      return {
-        id,
-        ordinal: idx + 1,
-        boardColumnId
+  const updateCardsOrder = useCallback(
+    async (cards: ColumnCard[]) => {
+      const updateCardsPayload = cards.map((card, idx) => {
+        const { id, boardColumnId } = card;
+
+        return {
+          id,
+          ordinal: idx + 1,
+          boardColumnId,
+        };
+      });
+
+      const cardsUpdateResponse = await bulkCardUpdateRequest({
+        overrideOptions: {
+          headers,
+          body: JSON.stringify(updateCardsPayload),
+        },
+      });
+
+      if (cardsUpdateResponse) {
+        toast.success("Cards have been updated", {
+          autoClose: 2000,
+        });
       }
-    });
-
-    await bulkCardUpdateRequest({
-      overrideOptions: {
-        headers,
-        body: JSON.stringify(updateCardsPayload),
-      },
-    });
-  }, [bulkCardUpdateRequest])
+    },
+    [bulkCardUpdateRequest]
+  );
 
   const appState = useMemo(() => {
     return {

@@ -41,6 +41,3 @@ $ cd client yarn start
 ![Screenshot 2025-01-12 at 13 21 58](https://github.com/user-attachments/assets/3fa47ea5-0bd7-47d2-9007-c2321bc09a73)
 
 ![Screenshot 2025-01-12 at 13 21 46](https://github.com/user-attachments/assets/d27eeadf-e950-44e0-9f10-3af14e42bb7b)
-
-
-

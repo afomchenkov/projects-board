@@ -35,3 +35,12 @@ $ docker compose -f ./docker-compose.dev.yml up
 <!-- once the services started, start the client -->
 $ cd client yarn start
 ```
+
+![Screenshot 2025-01-12 at 13 22 27](https://github.com/user-attachments/assets/7265ac31-6abe-42e2-b481-66db5b20b6b5)
+
+![Screenshot 2025-01-12 at 13 21 58](https://github.com/user-attachments/assets/3fa47ea5-0bd7-47d2-9007-c2321bc09a73)
+
+![Screenshot 2025-01-12 at 13 21 46](https://github.com/user-attachments/assets/d27eeadf-e950-44e0-9f10-3af14e42bb7b)
+
+
+

@@ -7,5 +7,9 @@
     display: flex;
     justify-content: center;
     margin-top: .7em;
+
+    button {
+      min-width: 8em;
+    }
   }
 }

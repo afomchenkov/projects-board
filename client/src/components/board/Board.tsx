@@ -27,20 +27,12 @@ const Board: BoardType = ({ columns }) => {
   const [boardData, setBoardData] = useState<BoardState>(() =>
     getInitialData(columns)
   );
-  const {
-    error,
-    isLoading,
-    boardColumns,
-    addNewColumn,
-    updateColumnsOrder,
-    updateCardsOrder,
-  } = useAppContext();
+  const { addNewColumn, updateColumnsOrder, updateCardsOrder } =
+    useAppContext();
 
   const handleAddNewColumn = useCallback(() => {
     addNewColumn();
   }, [addNewColumn]);
-
-  console.log(" 2 >>> ", { error, isLoading, boardColumns });
 
   useEffect(() => {
     const { actionType, cardOrderUpdateAction } = boardData;

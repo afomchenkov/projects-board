@@ -117,7 +117,6 @@ const Board: BoardType = ({ columns }) => {
           if (source.data.type === "card") {
             const cardId = source.data.cardId;
 
-            // TODO: these lines not needed if item has columnId on it
             const [, startColumnRecord] = location.initial.dropTargets;
             const sourceId = startColumnRecord.data.columnId as string;
 

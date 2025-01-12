@@ -59,7 +59,9 @@ export const AddCardForm: AddCardFormType = ({ onFormSubmit }) => {
       />
 
       <section className="add-card-form__submit-btn">
-        <Button type="submit">Submit</Button>
+        <Button appearance="primary" type="submit">
+          Submit
+        </Button>
       </section>
     </form>
   );

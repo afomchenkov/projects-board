@@ -58,6 +58,7 @@ export const ColumnHeader = memo<ColumnHeaderType>(({ column, ref }) => {
 
   const handleTitleUpdate = useCallback(() => {
     setIsEditable(false);
+
     if (previousNameValue.current !== columnName) {
       updateColumn({ ...column, name: columnName });
       previousNameValue.current = columnName;
@@ -127,7 +128,7 @@ export const ColumnHeader = memo<ColumnHeaderType>(({ column, ref }) => {
           onClick={handleColumnTitleEdit}
         />
         <IconButton
-          icon={TrashIcon}
+          icon={() => <TrashIcon size="small" label="Delete" />}
           label="Delete Column"
           appearance="subtle"
           onClick={handleColumnDeleteClick}

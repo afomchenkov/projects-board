@@ -36,6 +36,10 @@ $ docker compose -f ./docker-compose.dev.yml up
 $ cd client yarn start
 ```
 
+- The service is running at port: 8080
+- The client is runnint at port: 3000
+- The Swagger documentation is: http://localhost:8080/api/v1/docs
+
 ![Screenshot 2025-01-12 at 13 22 27](https://github.com/user-attachments/assets/7265ac31-6abe-42e2-b481-66db5b20b6b5)
 
 ![Screenshot 2025-01-12 at 13 21 58](https://github.com/user-attachments/assets/3fa47ea5-0bd7-47d2-9007-c2321bc09a73)

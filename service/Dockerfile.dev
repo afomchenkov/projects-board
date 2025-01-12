@@ -11,5 +11,3 @@ RUN npm install
 COPY service ./
 
 ENTRYPOINT [ "npm", "run", "start:dev" ]
-
-# TODO: add multistage build

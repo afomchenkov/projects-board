@@ -49,7 +49,7 @@ export class BoardColumnController {
     operationId: 'get-all-board-columns',
   })
   @ApiOkResponse({
-    description: 'Successful get all boards response',
+    description: 'Successful get all boards columns response',
     type: AllBoardColumnsDto,
   })
   @ApiBadRequestResponse({ description: 'Bad request' })
@@ -73,6 +73,30 @@ export class BoardColumnController {
     }
   }
 
+  @Get('/:id')
+  @HttpCode(200)
+  @ApiOperation({
+    summary: 'Get board column endpoint',
+    operationId: 'get-board-column',
+  })
+  @ApiOkResponse({
+    description: 'Successful get board column response',
+    type: BoardColumnDto,
+  })
+  @ApiBadRequestResponse({ description: 'Bad request' })
+  @ApiInternalServerErrorResponse({ description: 'Internal server error' })
+  async getBoardColumn(@Param('id') id: string,): Promise<BoardColumnDto> {
+    try {
+      const column = await this.boardColumnService.findOne(id);
+
+      return column;
+    } catch (error) {
+      this.logger.error(JSON.stringify(error));
+
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
   @Post('/')
   @HttpCode(201)
   @ApiOperation({
@@ -87,7 +111,7 @@ export class BoardColumnController {
   @ApiCreatedResponse({ description: 'Board column created', type: BaseResponseDto })
   @ApiBadRequestResponse({ description: 'Bad request' })
   @ApiInternalServerErrorResponse({ description: 'Internal server error' })
-  async createBoardColumn(@Body() payload: CreateBoardColumnDto): Promise<{ id: string }> {
+  async createBoardColumn(@Body() payload: CreateBoardColumnDto): Promise<BaseResponseDto> {
     try {
       const createdColumn = await this.boardColumnService.create(payload);
 
@@ -166,21 +190,21 @@ export class BoardColumnController {
   }
 
   @Delete('/:id')
-  @HttpCode(204)
+  @HttpCode(200)
   @ApiOperation({
     summary: 'Permanently delete board column',
     operationId: 'delete-board-column',
   })
   @ApiParam({ name: 'id', type: 'string', description: 'The uuid for the item to delete' })
-  @ApiResponse({ status: 204, description: 'Board column deleted' })
+  @ApiResponse({ status: 204, description: 'Board column deleted', type: BaseResponseDto })
   @ApiNotFoundResponse({ description: 'Board column not found' })
   @ApiBadRequestResponse({ description: 'Bad request' })
   @ApiInternalServerErrorResponse({ description: 'Internal server error' })
-  async deleteBoardColumn(@Param('id') id: string): Promise<void> {
+  async deleteBoardColumn(@Param('id') id: string): Promise<BaseResponseDto> {
     try {
-      await this.boardColumnService.delete(id);
+      const response = await this.boardColumnService.delete(id);
 
-      return Promise.resolve(null);
+      return response;
     } catch (error) {
       this.logger.error(JSON.stringify(error));
 

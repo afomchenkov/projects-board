@@ -139,7 +139,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BaseResponseDto'
+                $ref: '#/components/schemas/CaseCardDto'
         '400':
           description: Bad request
         '500':
@@ -223,7 +223,7 @@ paths:
       parameters: []
       responses:
         '200':
-          description: Successful get all boards response
+          description: Successful get all boards columns response
           content:
             application/json:
               schema:
@@ -258,39 +258,28 @@ paths:
           description: Internal server error
       summary: Creates new board column
       tags: *ref_4
-  /api/v1/board-columns/bulk:
-    put:
-      operationId: bulk-update-board-column
-      parameters: []
-      requestBody:
-        required: true
-        description: Payload to update boards columns
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/BulkUpdateBoardColumnDto'
+  /api/v1/board-columns/{id}:
+    get:
+      operationId: get-board-column
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
       responses:
         '200':
-          description: Board columns updated
+          description: Successful get board column response
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/BoardColumnDto'
+                $ref: '#/components/schemas/BoardColumnDto'
         '400':
           description: Bad request
-        '404':
-          description: Board column not found
-        '422':
-          description: Unprocessable board column entity
         '500':
           description: Internal server error
-      summary: Update boards columns
+      summary: Get board column endpoint
       tags: *ref_4
-  /api/v1/board-columns/{id}:
     put:
       operationId: update-board-column
       parameters:
@@ -336,6 +325,10 @@ paths:
       responses:
         '204':
           description: Board column deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponseDto'
         '400':
           description: Bad request
         '404':
@@ -343,6 +336,38 @@ paths:
         '500':
           description: Internal server error
       summary: Permanently delete board column
+      tags: *ref_4
+  /api/v1/board-columns/bulk:
+    put:
+      operationId: bulk-update-board-column
+      parameters: []
+      requestBody:
+        required: true
+        description: Payload to update boards columns
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/BulkUpdateBoardColumnDto'
+      responses:
+        '200':
+          description: Board columns updated
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BoardColumnDto'
+        '400':
+          description: Bad request
+        '404':
+          description: Board column not found
+        '422':
+          description: Unprocessable board column entity
+        '500':
+          description: Internal server error
+      summary: Update boards columns
       tags: *ref_4
   /api/v1/projects:
     get:
@@ -478,17 +503,6 @@ components:
         - ordinal
         - progress
         - boardColumnId
-    BaseResponseDto:
-      type: object
-      properties:
-        id:
-          type: string
-          nullable: false
-          description: Entity unique identifier
-          example: ce2c97af-17e4-4d85-8248-d7ba8b45527f
-          format: uuid
-      required:
-        - id
     BulkUpdateCaseCardDto:
       type: object
       properties:
@@ -684,6 +698,17 @@ components:
         - description
         - ordinal
         - boardId
+    BaseResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+          nullable: false
+          description: Entity unique identifier
+          example: ce2c97af-17e4-4d85-8248-d7ba8b45527f
+          format: uuid
+      required:
+        - id
     BulkUpdateBoardColumnDto:
       type: object
       properties:

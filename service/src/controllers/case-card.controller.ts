@@ -27,7 +27,6 @@ import {
 import { CaseCardService } from '../services';
 import {
   AllCaseCardsDto,
-  BaseResponseDto,
   BulkUpdateCaseCardDto,
   CaseCardDto,
   CreateCaseCardDto,
@@ -82,14 +81,14 @@ export class CaseCardController {
     required: true,
     description: 'Payload to create new board card',
   })
-  @ApiCreatedResponse({ description: 'Board card created', type: BaseResponseDto })
+  @ApiCreatedResponse({ description: 'Board card created', type: CaseCardDto })
   @ApiBadRequestResponse({ description: 'Bad request' })
   @ApiInternalServerErrorResponse({ description: 'Internal server error' })
-  async createCaseCard(@Body() payload: CreateCaseCardDto): Promise<{ id: string }> {
+  async createCaseCard(@Body() payload: CreateCaseCardDto): Promise<CaseCardDto> {
     try {
       const createdColumn = await this.caseCardService.create(payload);
 
-      return { id: createdColumn.id };
+      return createdColumn;
     } catch (error) {
       this.logger.error(JSON.stringify(error));
 

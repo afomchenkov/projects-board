@@ -39,7 +39,11 @@ export const AppProvider: AppProviderType = ({ children }) => {
     `${BOARD_COLUMNS_URL}`
   );
 
-  const { error: deleteColumnError, dispatch: deleteColumnRequest } = useFetch(
+  const {
+    isPending: isDeleteColumnLoading,
+    error: deleteColumnError,
+    dispatch: deleteColumnRequest,
+  } = useFetch(
     `${BOARD_COLUMNS_URL}`,
     {
       method: "DELETE",
@@ -47,7 +51,11 @@ export const AppProvider: AppProviderType = ({ children }) => {
     false
   );
 
-  const { error: createColumnsError, dispatch: createColumnRequest } = useFetch(
+  const {
+    isPending: isCreateColumnLoading,
+    error: createColumnsError,
+    dispatch: createColumnRequest,
+  } = useFetch(
     `${BOARD_COLUMNS_URL}`,
     {
       method: "POST",
@@ -81,7 +89,11 @@ export const AppProvider: AppProviderType = ({ children }) => {
       false
     );
 
-  const { error: createCardError, dispatch: createCardRequest } = useFetch(
+  const {
+    isPending: isCreateCardLoading,
+    error: createCardError,
+    dispatch: createCardRequest,
+  } = useFetch(
     `${COLUMN_CARDS_URL}`,
     {
       method: "POST",
@@ -102,6 +114,7 @@ export const AppProvider: AppProviderType = ({ children }) => {
     setIsLoading(isBoardColumnsLoading);
   }, [loadColumnsError, isBoardColumnsLoading, data]);
 
+  // show error notification
   useEffect(() => {
     if (bulkColumnsUpdateError) {
       toast.error("An error occurred updating board data.", {
@@ -117,6 +130,13 @@ export const AppProvider: AppProviderType = ({ children }) => {
     deleteColumnError,
     createCardError,
   ]);
+
+  useEffect(() => {
+    const isDataLoading =
+      isDeleteColumnLoading || isCreateColumnLoading || isCreateCardLoading;
+
+    setIsLoading(isDataLoading);
+  }, [isDeleteColumnLoading, isCreateColumnLoading, isCreateCardLoading]);
 
   const addNewColumn = useCallback(async (): Promise<string> => {
     const createColumnPayload = {

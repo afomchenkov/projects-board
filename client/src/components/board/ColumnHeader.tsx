@@ -88,8 +88,9 @@ export const ColumnHeader = memo<ColumnHeaderType>(
     };
 
     const handleColumnDelete = useCallback(async () => {
-      const deletedId = await deleteColumn(columnId);
       setIsDeleteColumnModalOpened(false);
+
+      const deletedId = await deleteColumn(columnId);
 
       if (deletedId) {
         onColumnDelete(deletedId);

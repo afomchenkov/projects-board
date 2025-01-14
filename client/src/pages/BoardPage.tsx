@@ -12,7 +12,10 @@ const BoardPage = () => {
 
   return (
     <BaseLayout title={<h1>Board Page</h1>}>
-      <>{isLoading ? <PageLoader /> : <Board columns={boardColumns} />}</>
+      <>
+        {isLoading && <PageLoader />}
+        {!!boardColumns.length && <Board columns={boardColumns} />}
+      </>
     </BaseLayout>
   );
 };

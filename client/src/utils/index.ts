@@ -10,6 +10,10 @@ import {
 
 const DATE_FORMAT = "MM/dd/yyyy";
 
+export const Noop = () => { };
+
+export const NoopAsync = () => Promise.resolve<any>(null);
+
 export const formatDate = (date: string) => format(toDate(date), DATE_FORMAT);
 
 export const daysFromNow = (date: string) => {
@@ -25,8 +29,6 @@ export const capitalize = (str: string) => {
 };
 
 export const parseDateString = (date: string) => new Date(date).toUTCString();
-
-export const Noop = () => { };
 
 export const generateRandomStr = (length: number): string => {
   let result = '';

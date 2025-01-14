@@ -27,15 +27,70 @@ const Board: BoardType = ({ columns }) => {
   const [boardData, setBoardData] = useState<BoardState>(() =>
     getInitialData(columns)
   );
-  const { addNewColumn, updateColumnsOrder, updateCardsOrder } =
+  const { addNewColumn, fetchColumn, updateColumnsOrder, updateCardsOrder } =
     useAppContext();
 
-  const handleAddNewColumn = useCallback(() => {
-    addNewColumn();
-  }, [addNewColumn]);
+  const handleColumnAdd = useCallback(async () => {
+    const newColumnId = await addNewColumn();
+
+    if (newColumnId) {
+      const newColumn = await fetchColumn(newColumnId);
+
+      setBoardData((state) => {
+        const newState = { ...state };
+
+        if (!newState.columnMap[newColumnId]) {
+          newState.columnMap[newColumnId] = newColumn;
+          newState.orderedColumnIds.push(newColumnId);
+          newState.columnsOnAppLoad.push(newColumn);
+        }
+
+        return newState;
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleColumnDelete = useCallback((id: string) => {
+    setBoardData((state) => {
+      const newState = { ...state };
+      if (newState.columnMap[id]) {
+        const columnIndex = newState.columnsOnAppLoad.findIndex(
+          (column) => column.id === id
+        );
+        newState.columnsOnAppLoad.splice(columnIndex, 1);
+        delete newState.columnMap[id];
+        const columnIdIndex = newState.orderedColumnIds.findIndex(
+          (columnId) => columnId === id
+        );
+        newState.orderedColumnIds.splice(columnIdIndex, 1);
+      }
+
+      return newState;
+    });
+  }, []);
+
+  const handleCardAdd = useCallback((card: ColumnCard) => {
+    setBoardData((state) => {
+      const sourceColumn = state.columnMap[card.boardColumnId];
+      const updatedSourceColumn: BoardColumn = {
+        ...sourceColumn,
+        columnCards: [...sourceColumn.columnCards, card],
+      };
+
+      return {
+        ...state,
+        columnMap: {
+          ...state.columnMap,
+          [sourceColumn.id]: updatedSourceColumn,
+        },
+      };
+    });
+  }, []);
 
   useEffect(() => {
     const { actionType, cardOrderUpdateAction } = boardData;
+
     switch (actionType) {
       case BoardActionType.ChangeColumnsOrder: {
         updateColumnsOrder(reorderColumns(boardData));
@@ -304,12 +359,19 @@ const Board: BoardType = ({ columns }) => {
   return (
     <div className="app-board" ref={ref}>
       {boardData.orderedColumnIds.map((columnId) => {
-        return <Column column={boardData.columnMap[columnId]} key={columnId} />;
+        return (
+          <Column
+            column={boardData.columnMap[columnId]}
+            key={columnId}
+            onColumnDelete={handleColumnDelete}
+            onCardAdd={handleCardAdd}
+          />
+        );
       })}
       <IconButton
         icon={AddIcon}
         label="Add New Column"
-        onClick={handleAddNewColumn}
+        onClick={handleColumnAdd}
       />
     </div>
   );

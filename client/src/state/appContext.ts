@@ -1,14 +1,15 @@
 import { createContext, useContext } from "react";
 import { BoardColumn, ColumnCard } from "../types";
-import { Noop } from "../utils";
+import { Noop, NoopAsync } from "../utils";
 
 export type AppState = {
   boardColumns: BoardColumn[];
   isLoading: boolean;
   error: string | null;
-  addNewColumn: () => void;
-  deleteColumn: (id: string) => void;
-  addNewCaseCard: (createCard: Partial<ColumnCard>) => void;
+  fetchColumn: (id: string) => Promise<BoardColumn>;
+  addNewColumn: () => Promise<string>;
+  deleteColumn: (id: string) => Promise<string | null>;
+  addNewCaseCard: (card: Partial<ColumnCard>) => Promise<ColumnCard>;
   updateColumnsOrder: (columns: BoardColumn[]) => void;
   updateColumn: (column: BoardColumn) => void;
   updateCardsOrder: (cards: ColumnCard[]) => void;
@@ -18,9 +19,10 @@ export const defaultAppState = {
   boardColumns: [],
   isLoading: false,
   error: null,
-  addNewColumn: Noop,
-  deleteColumn: Noop,
-  addNewCaseCard: Noop,
+  fetchColumn: NoopAsync,
+  addNewColumn: NoopAsync,
+  deleteColumn: NoopAsync,
+  addNewCaseCard: NoopAsync,
   updateColumnsOrder: Noop,
   updateColumn: Noop,
   updateCardsOrder: Noop,

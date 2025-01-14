@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import {
   BulkUpdateBoardColumnDto,
+  BaseResponseDto,
   CreateBoardColumnDto,
   UpdateBoardColumnDto,
 } from '../dtos';
@@ -29,7 +30,12 @@ export class BoardColumnService {
   }
 
   async findOne(id: string): Promise<BoardColumnEntity | null> {
-    return this.boardColumnRepository.findOneBy({ id });
+    return this.boardColumnRepository.findOne({
+      where: {
+        id,
+      },
+      relations: ['columnCards'],
+    });
   }
 
   async create(payload: CreateBoardColumnDto): Promise<BoardColumnEntity | null> {
@@ -65,7 +71,7 @@ export class BoardColumnService {
     return updatedItems;
   }
 
-  async delete(id: string): Promise<void> {
+  async delete(id: string): Promise<BaseResponseDto> {
     const existingColumn = await this.findOne(id);
 
     if (!existingColumn) {
@@ -77,5 +83,7 @@ export class BoardColumnService {
 
     // delete board column
     await this.boardColumnRepository.delete(id);
+
+    return { id: existingColumn.id };
   }
 }

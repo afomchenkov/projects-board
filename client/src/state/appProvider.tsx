@@ -33,14 +33,13 @@ export const AppProvider: AppProviderType = ({ children }) => {
     data,
     isPending: isBoardColumnsLoading,
     error: loadColumnsError,
-    dispatch: fetchBoardColumns,
   } = useFetch(`${BOARD_COLUMNS_URL}?boardId=${BOARD_ID}`);
 
-  const {
-    isPending: isDeleteBoardColumnsLoading,
-    error: deleteColumnsError,
-    dispatch: deleteColumnRequest,
-  } = useFetch(
+  const { error: loadColumnError, dispatch: fetchBoardColumn } = useFetch(
+    `${BOARD_COLUMNS_URL}`
+  );
+
+  const { error: deleteColumnError, dispatch: deleteColumnRequest } = useFetch(
     `${BOARD_COLUMNS_URL}`,
     {
       method: "DELETE",
@@ -48,11 +47,7 @@ export const AppProvider: AppProviderType = ({ children }) => {
     false
   );
 
-  const {
-    isPending: isCreateBoardColumnsLoading,
-    error: createColumnsError,
-    dispatch: createColumnRequest,
-  } = useFetch(
+  const { error: createColumnsError, dispatch: createColumnRequest } = useFetch(
     `${BOARD_COLUMNS_URL}`,
     {
       method: "POST",
@@ -86,11 +81,7 @@ export const AppProvider: AppProviderType = ({ children }) => {
       false
     );
 
-  const {
-    isPending: isCreateCardLoading,
-    error: createCardError,
-    dispatch: createCardRequest,
-  } = useFetch(
+  const { error: createCardError, dispatch: createCardRequest } = useFetch(
     `${COLUMN_CARDS_URL}`,
     {
       method: "POST",
@@ -111,52 +102,23 @@ export const AppProvider: AppProviderType = ({ children }) => {
     setIsLoading(isBoardColumnsLoading);
   }, [loadColumnsError, isBoardColumnsLoading, data]);
 
-  // reload columns after column delete/create or new card create
-  useEffect(() => {
-    const fetchError =
-      deleteColumnsError || createColumnsError || createCardError;
-    if (fetchError) {
-      setError(fetchError);
-    }
-
-    const shouldReloadBoardColumns =
-      !isDeleteBoardColumnsLoading &&
-      !isCreateBoardColumnsLoading &&
-      !isCreateCardLoading;
-    if (shouldReloadBoardColumns) {
-      fetchBoardColumns();
-    }
-  }, [
-    isCreateCardLoading,
-    isCreateBoardColumnsLoading,
-    isDeleteBoardColumnsLoading,
-    createColumnsError,
-    deleteColumnsError,
-    createCardError,
-    fetchBoardColumns,
-  ]);
-
   useEffect(() => {
     if (bulkColumnsUpdateError) {
-      toast.error("Error occurred while updating the columns", {
+      toast.error("An error occurred updating board data.", {
         pauseOnHover: true,
       });
     }
+  }, [
+    createColumnsError,
+    loadColumnError,
+    bulkColumnsUpdateError,
+    columnUpdateError,
+    bulkCardUpdateError,
+    deleteColumnError,
+    createCardError,
+  ]);
 
-    if (columnUpdateError) {
-      toast.error("Error occurred while updating the column data", {
-        pauseOnHover: true,
-      });
-    }
-
-    if (bulkCardUpdateError) {
-      toast.error("Error occurred while updating the cards", {
-        pauseOnHover: true,
-      });
-    }
-  }, [bulkColumnsUpdateError, columnUpdateError, bulkCardUpdateError]);
-
-  const addNewColumn = useCallback(async () => {
+  const addNewColumn = useCallback(async (): Promise<string> => {
     const createColumnPayload = {
       name: `new-column-${generateRandomStr(4)}`,
       description: `new-column-description-${generateRandomStr(24)}`,
@@ -164,22 +126,42 @@ export const AppProvider: AppProviderType = ({ children }) => {
       boardId: boardColumns[0].boardId,
     };
 
-    await createColumnRequest({
+    const response = await createColumnRequest({
       overrideOptions: {
         headers,
         body: JSON.stringify(createColumnPayload),
       },
     });
+
+    return (response as { id: string }).id;
   }, [createColumnRequest, boardColumns]);
 
+  const fetchColumn = useCallback(
+    async (id: string): Promise<BoardColumn> => {
+      const response = await fetchBoardColumn({
+        overrideUrl: `${BOARD_COLUMNS_URL}/${id}`,
+        overrideOptions: {
+          headers,
+        },
+      });
+
+      return response as BoardColumn;
+    },
+    [fetchBoardColumn]
+  );
+
   const deleteColumn = useCallback(
-    async (id: string) => {
+    async (id: string): Promise<string | null> => {
       // ensure that at least one column is available on the board
       if (boardColumns.length > 1) {
-        await deleteColumnRequest({
+        const response = await deleteColumnRequest({
           overrideUrl: `${BOARD_COLUMNS_URL}/${id}`,
         });
+
+        return (response as { id: string }).id;
       }
+
+      return null;
     },
     [deleteColumnRequest, boardColumns]
   );
@@ -191,55 +173,44 @@ export const AppProvider: AppProviderType = ({ children }) => {
         ordinal: column.ordinal,
       }));
 
-      const response = await bulkColumnsUpdateRequest({
+      await bulkColumnsUpdateRequest({
         overrideOptions: {
           headers,
           body: JSON.stringify(updatePayload),
         },
       });
-
-      if (response) {
-        toast.success("Columns have been updated", {
-          autoClose: 2000,
-        });
-      }
     },
     [bulkColumnsUpdateRequest]
   );
 
   const updateColumn = useCallback(
     async (column: BoardColumn) => {
-      const response = await columnUpdateRequest({
+      await columnUpdateRequest({
         overrideUrl: `${BOARD_COLUMNS_URL}/${column.id}`,
         overrideOptions: {
           headers,
           body: JSON.stringify(column),
         },
       });
-
-      if (response) {
-        toast.success(`Column updated: ${(response as BoardColumn).name}`, {
-          autoClose: 2000,
-          pauseOnHover: true,
-        });
-      }
     },
     [columnUpdateRequest]
   );
 
   const addNewCaseCard = useCallback(
-    async (createCardPayload: Partial<ColumnCard>) => {
+    async (createCardPayload: Partial<ColumnCard>): Promise<ColumnCard> => {
       const payload = {
         ...createCardPayload,
         progress: getRandomNumber(5, 99),
       };
 
-      await createCardRequest({
+      const response = await createCardRequest({
         overrideOptions: {
           headers,
           body: JSON.stringify(payload),
         },
       });
+
+      return response as ColumnCard;
     },
     [createCardRequest]
   );
@@ -256,18 +227,12 @@ export const AppProvider: AppProviderType = ({ children }) => {
         };
       });
 
-      const cardsUpdateResponse = await bulkCardUpdateRequest({
+      await bulkCardUpdateRequest({
         overrideOptions: {
           headers,
           body: JSON.stringify(updateCardsPayload),
         },
       });
-
-      if (cardsUpdateResponse) {
-        toast.success("Cards have been updated", {
-          autoClose: 2000,
-        });
-      }
     },
     [bulkCardUpdateRequest]
   );
@@ -278,6 +243,7 @@ export const AppProvider: AppProviderType = ({ children }) => {
       boardColumns,
       isLoading,
       error,
+      fetchColumn,
       addNewColumn,
       deleteColumn,
       addNewCaseCard,
@@ -289,6 +255,7 @@ export const AppProvider: AppProviderType = ({ children }) => {
     isLoading,
     boardColumns,
     error,
+    fetchColumn,
     addNewColumn,
     deleteColumn,
     addNewCaseCard,

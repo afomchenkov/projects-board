@@ -99,8 +99,11 @@ const Board: BoardType = ({ columns }) => {
       case BoardActionType.ChangeCardsOrder: {
         if (cardOrderUpdateAction) {
           const { columnCards } =
-            boardData.columnMap[cardOrderUpdateAction.sourceColumnId];
-          updateCardsOrder(columnCards);
+            boardData.columnMap[cardOrderUpdateAction.sourceColumnId] || {};
+
+          if (columnCards) {
+            updateCardsOrder(columnCards);
+          }
         }
         break;
       }

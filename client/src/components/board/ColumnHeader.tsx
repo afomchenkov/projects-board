@@ -40,121 +40,130 @@ const MAX_TITLE_LENGTH = 30;
 export type ColumnHeaderType = (props: {
   column: BoardColumn;
   ref: RefObject<HTMLDivElement | null>;
+  onColumnDelete: (id: string) => void;
 }) => React.JSX.Element;
 
-export const ColumnHeader = memo<ColumnHeaderType>(({ column, ref }) => {
-  const { id: columnId, name } = column;
+export const ColumnHeader = memo<ColumnHeaderType>(
+  ({ column, ref, onColumnDelete }) => {
+    const { id: columnId, name } = column || {};
 
-  const editBoxRef = useRef<HTMLDivElement | null>(null);
-  const editableRef = useRef<HTMLInputElement | null>(null);
-  const previousNameValue = useRef<string>(name);
+    const editBoxRef = useRef<HTMLDivElement | null>(null);
+    const editableRef = useRef<HTMLInputElement | null>(null);
+    const previousNameValue = useRef<string>(name);
 
-  const [isEditable, setIsEditable] = useState(false);
-  const [isDeleteColumnModalOpened, setIsDeleteColumnModalOpened] =
-    useState(false);
-  const [columnName, setColumnName] = useState(name);
+    const [isEditable, setIsEditable] = useState(false);
+    const [isDeleteColumnModalOpened, setIsDeleteColumnModalOpened] =
+      useState(false);
+    const [columnName, setColumnName] = useState(name);
 
-  const { deleteColumn, updateColumn } = useAppContext();
+    const { deleteColumn, updateColumn } = useAppContext();
 
-  const handleTitleUpdate = useCallback(() => {
-    setIsEditable(false);
+    const handleTitleUpdate = useCallback(() => {
+      setIsEditable(false);
 
-    if (previousNameValue.current !== columnName) {
-      updateColumn({ ...column, name: columnName });
-      previousNameValue.current = columnName;
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [column, columnName]);
+      if (previousNameValue.current !== columnName) {
+        updateColumn({ ...column, name: columnName });
+        previousNameValue.current = columnName;
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [column, columnName]);
 
-  useClickOutside(editBoxRef, handleTitleUpdate);
-  useEscapeKey(handleTitleUpdate);
+    useClickOutside(editBoxRef, handleTitleUpdate);
+    useEscapeKey(handleTitleUpdate);
 
-  const handleTitleInput = (event: ChangeEvent<HTMLInputElement>) => {
-    const text = event.target.value || "";
+    const handleTitleInput = (event: ChangeEvent<HTMLInputElement>) => {
+      const text = event.target.value || "";
 
-    if (text.length <= MAX_TITLE_LENGTH) {
-      setColumnName(text);
-    }
-  };
+      if (text.length <= MAX_TITLE_LENGTH) {
+        setColumnName(text);
+      }
+    };
 
-  const handleColumnTitleEdit = () => {
-    setIsEditable((isEnabled) => !isEnabled);
-  };
+    const handleColumnTitleEdit = () => {
+      setIsEditable((isEnabled) => !isEnabled);
+    };
 
-  const handleColumnDeleteClick = () => {
-    setIsDeleteColumnModalOpened(true);
-  };
+    const handleColumnDeleteClick = () => {
+      setIsDeleteColumnModalOpened(true);
+    };
 
-  const handleColumnDelete = () => {
-    deleteColumn(columnId);
-  };
+    const handleColumnDelete = useCallback(async () => {
+      const deletedId = await deleteColumn(columnId);
+      setIsDeleteColumnModalOpened(false);
 
-  useEffect(() => {
-    if (editableRef.current && isEditable) {
-      // Focus the input
-      editableRef.current.focus();
-      // Move the cursor to the end of the text
-      const length = editableRef.current.value.length;
-      editableRef.current.setSelectionRange(length, length);
-    }
-  }, [isEditable]);
+      if (deletedId) {
+        onColumnDelete(deletedId);
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
-  return (
-    <div
-      className="app-board-column--header"
-      ref={ref}
-      data-testid={`column-${columnId}`}
-    >
-      <div className="app-board-column--title-container">
-        {isEditable ? (
-          <input
-            className="app-board-column--title-editable"
-            ref={editableRef}
-            value={columnName}
-            placeholder="Column title"
-            onChange={handleTitleInput}
-            onClick={(e) => e.stopPropagation()}
-          />
-        ) : (
-          <div className="app-board-column--title">{columnName}</div>
-        )}
-      </div>
+    useEffect(() => {
+      if (editableRef.current && isEditable) {
+        // Focus the input
+        editableRef.current.focus();
+        // Move the cursor to the end of the text
+        const length = editableRef.current.value.length;
+        editableRef.current.setSelectionRange(length, length);
+      }
+    }, [isEditable]);
 
-      <div ref={editBoxRef}>
-        <IconButton
-          icon={() => <EditIcon size="small" label="Edit" />}
-          appearance="subtle"
-          label="Edit Title"
-          onClick={handleColumnTitleEdit}
-        />
-        <IconButton
-          icon={() => <TrashIcon size="small" label="Delete" />}
-          label="Delete Column"
-          appearance="subtle"
-          onClick={handleColumnDeleteClick}
-        />
-      </div>
-
-      <Modal
-        isOpen={isDeleteColumnModalOpened}
-        ariaHideApp={false}
-        style={deleteColumnModalStyles}
+    return (
+      <div
+        className="app-board-column--header"
+        ref={ref}
+        data-testid={`column-${columnId}`}
       >
-        <section className="app-board-column__modal-delete-col">
-          <p>
-            Are you sure you want to delete this column? This will permanently
-            remove the column and assigned cards.
-          </p>
-          <div className="app-board-column__modal-delete-col-buttons">
-            <Button onClick={() => setIsDeleteColumnModalOpened(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleColumnDelete} appearance="danger">
-              Delete
-            </Button>
-          </div>
-        </section>
-      </Modal>
-    </div>
-  );
-});
+        <div className="app-board-column--title-container">
+          {isEditable ? (
+            <input
+              className="app-board-column--title-editable"
+              ref={editableRef}
+              value={columnName}
+              placeholder="Column title"
+              onChange={handleTitleInput}
+              onClick={(e) => e.stopPropagation()}
+            />
+          ) : (
+            <div className="app-board-column--title">{columnName}</div>
+          )}
+        </div>
+
+        <div ref={editBoxRef}>
+          <IconButton
+            icon={() => <EditIcon size="small" label="Edit" />}
+            appearance="subtle"
+            label="Edit Title"
+            onClick={handleColumnTitleEdit}
+          />
+          <IconButton
+            icon={() => <TrashIcon size="small" label="Delete" />}
+            label="Delete Column"
+            appearance="subtle"
+            onClick={handleColumnDeleteClick}
+          />
+        </div>
+
+        <Modal
+          isOpen={isDeleteColumnModalOpened}
+          ariaHideApp={false}
+          style={deleteColumnModalStyles}
+        >
+          <section className="app-board-column__modal-delete-col">
+            <p>
+              Are you sure you want to delete this column? This will permanently
+              remove the column and assigned cards.
+            </p>
+            <div className="app-board-column__modal-delete-col-buttons">
+              <Button onClick={() => setIsDeleteColumnModalOpened(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleColumnDelete} appearance="danger">
+                Delete
+              </Button>
+            </div>
+          </section>
+        </Modal>
+      </div>
+    );
+  }
+);

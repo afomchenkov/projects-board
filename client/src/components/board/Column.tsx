@@ -157,7 +157,9 @@ export const Column = memo<ColumnType>(
         </div>
 
         <DropIndicator edge={closestEdge} gap={16} />
-        <Button onClick={handleNewCaseCreateClick}>Create Case</Button>
+        <Button onClick={handleNewCaseCreateClick}>
+          <strong>Create Case</strong>
+        </Button>
 
         <Modal
           isOpen={isCreateCaseModalOpened}

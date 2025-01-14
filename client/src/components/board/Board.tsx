@@ -107,14 +107,17 @@ const Board: BoardType = ({ columns }) => {
       case BoardActionType.MoveCardToAnotherColumn: {
         if (cardOrderUpdateAction) {
           const { destinationColumnId } = cardOrderUpdateAction;
-          const { columnCards } = boardData.columnMap[destinationColumnId];
+          const { columnCards } =
+            boardData.columnMap[destinationColumnId] || {};
 
-          updateCardsOrder(
-            columnCards.map((card) => {
-              card.boardColumnId = destinationColumnId;
-              return card;
-            })
-          );
+          if (columnCards) {
+            updateCardsOrder(
+              columnCards.map((card) => {
+                card.boardColumnId = destinationColumnId;
+                return card;
+              })
+            );
+          }
         }
         break;
       }

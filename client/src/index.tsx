@@ -1,4 +1,3 @@
-import React from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider } from "react-router-dom";
 import { router } from "./routes";
@@ -18,9 +17,7 @@ const root = ReactDOM.createRoot(
 );
 
 root.render(
-  <React.StrictMode>
-    <RouterProvider router={router} fallbackElement={<h2>Loading...</h2>} />
-  </React.StrictMode>
+  <RouterProvider router={router} fallbackElement={<h2>Loading...</h2>} />
 );
 
 // If you want to start measuring performance in your app, pass a function

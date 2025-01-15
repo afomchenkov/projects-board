@@ -28,10 +28,18 @@ until docker compose -f ./docker-compose.dev.yml exec -T projects-board-service 
     sleep 10
 done
 
-# Step 3: Start the frontend app
-echo "Starting the frontend application..."
-cd client
-yarn start
+if [ -z "$1" ]; then
+  echo "Usage: $0 <parameter>"
+fi
 
-# Keep the script running to handle Ctrl+C
-wait
+param="$1"
+
+if [ "$param" == "client:dev" ]; then
+    # Step 3: Start the frontend app
+    echo "Starting the frontend application..."
+    cd client
+    yarn start
+
+    # Keep the script running to handle Ctrl+C
+    wait
+fi

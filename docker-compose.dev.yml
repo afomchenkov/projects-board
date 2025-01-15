@@ -45,6 +45,22 @@ services:
         condition: service_healthy
     networks:
       - projects-board-network
+  
+  projects-board-client:
+    image: projects-board-client:dev
+    container_name: projects-board-client
+    build:
+      context: .
+      dockerfile: client/Dockerfile.dev
+    ports:
+      - 80:80
+    tty: true
+    environment:
+      PORT: 80
+    depends_on:
+      - projects-board-service
+    networks:
+      - projects-board-network
 
 networks:
   projects-board-network:

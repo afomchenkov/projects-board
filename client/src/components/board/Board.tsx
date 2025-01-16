@@ -89,6 +89,7 @@ const Board: BoardType = ({ columns }) => {
     });
   }, []);
 
+  // dispatch sync BE requests on cards/columns reorder to sync ordinals
   useEffect(() => {
     const { actionType, cardOrderUpdateAction } = boardData;
 
@@ -158,6 +159,7 @@ const Board: BoardType = ({ columns }) => {
             );
             const edge: Edge | null = extractClosestEdge(target.data);
 
+            // find target column and destibation column, trigger reordering with edge
             const reorderedColumnsIds = reorderWithEdge({
               list: boardData.orderedColumnIds,
               startIndex,
@@ -166,7 +168,7 @@ const Board: BoardType = ({ columns }) => {
               axis: "horizontal",
             });
 
-            // on column drag end
+            // on column drag end we save the state of the board
             setBoardData({
               ...boardData,
               orderedColumnIds: reorderedColumnsIds,
@@ -175,10 +177,11 @@ const Board: BoardType = ({ columns }) => {
             });
           }
 
-          // Drag/Drop a card
+          // handle drag/drop a card
           if (source.data.type === "card") {
             const cardId = source.data.cardId;
 
+            // find source column to which card belongs to now
             const [, startColumnRecord] = location.initial.dropTargets;
             const sourceId = startColumnRecord.data.columnId as string;
 
@@ -186,10 +189,12 @@ const Board: BoardType = ({ columns }) => {
             const cardIndex = sourceColumn.columnCards.findIndex(
               (card) => card.id === cardId
             );
+            // find source card which we want to drag
             const columnCardByIndex: ColumnCard =
               sourceColumn.columnCards[cardIndex];
 
             if (location.current.dropTargets.length === 1) {
+              // find destination column, on which the card lands
               const [destinationColumnRecord] = location.current.dropTargets;
               const destinationId = destinationColumnRecord.data
                 .columnId as string;

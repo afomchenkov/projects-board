@@ -12,6 +12,7 @@ import {
 import { dropTargetForFiles } from "@atlaskit/drag-and-drop/adapter/file";
 import { combine } from "@atlaskit/drag-and-drop/util/combine";
 import { scrollJustEnoughIntoView } from "@atlaskit/drag-and-drop/util/scroll-just-enough-into-view";
+// https://atlassian.design/components/pragmatic-drag-and-drop/core-package/utilities/
 import { ColumnCard } from "../../types";
 import { parseUpdatedAt } from "../../utils";
 import "./Card.scss";

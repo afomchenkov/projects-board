@@ -4,6 +4,7 @@ import { extractClosestEdge } from "@atlaskit/drag-and-drop-hitbox/closest-edge"
 import { reorderWithEdge } from "@atlaskit/drag-and-drop-hitbox/reorder-with-edge";
 import { monitorForElements } from "@atlaskit/drag-and-drop/adapter/element";
 import { combine } from "@atlaskit/drag-and-drop/util/combine";
+// https://atlassian.design/components/pragmatic-drag-and-drop/core-package/utilities/
 import { IconButton } from "@atlaskit/button/new";
 import AddIcon from "@atlaskit/icon/glyph/add";
 import { useAppContext } from "../../state/appContext";

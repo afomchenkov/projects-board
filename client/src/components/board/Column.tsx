@@ -11,6 +11,7 @@ import {
   dropTargetForElements,
 } from "@atlaskit/drag-and-drop/adapter/element";
 import { combine } from "@atlaskit/drag-and-drop/util/combine";
+// https://atlassian.design/components/pragmatic-drag-and-drop/core-package/utilities/
 import { IconButton } from "@atlaskit/button/new";
 import Button from "@atlaskit/button/new";
 import CrossIcon from "@atlaskit/icon/glyph/cross";
@@ -70,6 +71,7 @@ export const Column = memo<ColumnType>(
       setIsCreateCaseModalOpened(true);
     };
 
+    // handle card creation, send request to save new card
     const handleNewCaseCreateSubmit = useCallback(
       async (data: AddCardFormData) => {
         setIsCreateCaseModalOpened(false);
